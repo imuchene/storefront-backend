@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "entity:create": "typeorm entity:create -n",
-    "migrations:create": "npm run typeorm -- migration:generate -n",
+    "migrations:create": "npm run typeorm -- migration:create -n",
     "migrations:run": "npm run typeorm -- migration:run",
     "migrations:revert": "npm run typeorm -- migration:revert"
   },

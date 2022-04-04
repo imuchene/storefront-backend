@@ -10,10 +10,21 @@ export default registerAs('database', () => {
     password: process.env.DB_MAIN_PASSWORD,
     database: process.env.DB_MAIN_DATABASE,
     autoLoadEntities: true,
-    entities: ['src/**/*.entity.ts'],
-    migrations: ['src/migrations/*{.ts,.js}'],
-    cli: {
-      migrationsDir: 'src/migrations',
-    }
+    ssl: {
+      rejectUnauthorized: false,
+    },
+    entities: [
+      baseFolder() + 'modules/**/*.entity{.ts,.js}',
+      baseFolder() + 'modules/**/*.view{.ts,.js}',
+    ],
+    migrations: [baseFolder() + 'migrations/**/*{.ts,.js}'],
+      cli: {
+        migrationsDir: baseFolder() + '/migrations',
+      },
   }
 })
+
+function baseFolder(): string {
+  const regex = /common+(\/|\\)+config/gi;
+  return __dirname.replace(regex, '');
+}
