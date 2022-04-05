@@ -1,4 +1,4 @@
-import { registerAs } from "@nestjs/config";
+import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => {
   return {
@@ -18,11 +18,11 @@ export default registerAs('database', () => {
       baseFolder() + 'modules/**/*.view{.ts,.js}',
     ],
     migrations: [baseFolder() + 'migrations/**/*{.ts,.js}'],
-      cli: {
-        migrationsDir: baseFolder() + '/migrations',
-      },
-  }
-})
+    cli: {
+      migrationsDir: baseFolder() + '/migrations',
+    },
+  };
+});
 
 function baseFolder(): string {
   const regex = /common+(\/|\\)+config/gi;

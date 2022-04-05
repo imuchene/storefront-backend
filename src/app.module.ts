@@ -9,7 +9,6 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CustomersModule } from './modules/customers/customers.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,12 +18,14 @@ import { CustomersModule } from './modules/customers/customers.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({...configService.get('database')}),
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('database'),
+      }),
       inject: [ConfigService],
     }),
     OrdersModule,
     ProductsModule,
-    CustomersModule
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

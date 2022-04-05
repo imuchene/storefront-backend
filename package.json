@@ -23,7 +23,8 @@
     "entity:create": "typeorm entity:create -n",
     "migrations:create": "npm run typeorm -- migration:create -n",
     "migrations:run": "npm run typeorm -- migration:run",
-    "migrations:revert": "npm run typeorm -- migration:revert"
+    "migrations:revert": "npm run typeorm -- migration:revert",
+    "prepush": "npm run format && npm run lint && npm run build && npm test"
   },
   "dependencies": {
     "@nestjs/common": "^8.4.3",
