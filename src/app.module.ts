@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import dbConfig from './common/config/db.config';
 import { validate } from './common/config/env.validation';
+import { OrdersModule } from './modules/orders/orders.module';
+import { ProductsModule } from './modules/products/products.module';
+import { CustomersModule } from './modules/customers/customers.module';
 
 
 @Module({
@@ -18,7 +21,10 @@ import { validate } from './common/config/env.validation';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({...configService.get('database')}),
       inject: [ConfigService],
-    })
+    }),
+    OrdersModule,
+    ProductsModule,
+    CustomersModule
   ],
   controllers: [AppController],
   providers: [AppService],
