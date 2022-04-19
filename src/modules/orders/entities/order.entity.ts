@@ -1,4 +1,4 @@
-import { Customer } from '../../customers/models/customer';
+import { Customer } from '../../customers/entities/customer.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { OrderItem } from './order-item';
+import { OrderItem } from './order-item.entity';
 
-@Entity()
+@Entity('orders')
 export class Order {
   constructor(intialData: Partial<Order> = null) {
     if (intialData !== null) {

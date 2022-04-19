@@ -1,8 +1,8 @@
-import { Product } from '../../products/models/product';
+import { Product } from '../../products/entities/product.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { Order } from './order';
+import { Order } from './order.entity';
 
-@Entity()
+@Entity('order_items')
 export class OrderItem {
   constructor(intialData: Partial<OrderItem> = null) {
     if (intialData !== null) {

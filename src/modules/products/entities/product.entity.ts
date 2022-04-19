@@ -1,4 +1,4 @@
-import { OrderItem } from 'src/modules/orders/models/order-item';
+import { OrderItem } from '../../orders/entities/order-item.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('products')
 export class Product {
   constructor(intialData: Partial<Product> = null) {
     if (intialData !== null) {

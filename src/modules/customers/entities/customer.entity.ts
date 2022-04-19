@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Order } from '../../orders/models/order';
+import { Order } from '../../orders/entities/order.entity';
 import {
   Column,
   CreateDateColumn,
