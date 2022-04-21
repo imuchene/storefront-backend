@@ -2,6 +2,7 @@ import { OrderItem } from '../../orders/entities/order-item.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -25,9 +26,6 @@ export class Product {
   @Column({ name: 'unit_price', type: 'numeric' })
   unitPrice: number;
 
-  @Column({ name: 'is_discontinued', type: 'boolean' })
-  isDiscontinued: boolean;
-
   @Column({ type: 'text' })
   description: string;
 
@@ -48,6 +46,12 @@ export class Product {
     default: 'now()',
   })
   updatedAt: string;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    type: 'timestamptz',
+  })
+  deletedAt: string;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];
