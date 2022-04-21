@@ -8,6 +8,7 @@ import { validate } from './common/config/env.validation';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CustomersModule } from './modules/customers/customers.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CustomersModule } from './modules/customers/customers.module';
     OrdersModule,
     ProductsModule,
     CustomersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

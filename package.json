@@ -27,7 +27,6 @@
     "prepush": "npm run format && npm run lint && npm run build && npm test",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
-
   },
   "dependencies": {
     "@nestjs/common": "^8.4.3",
@@ -36,6 +35,8 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.4.3",
     "@nestjs/typeorm": "^8.0.3",
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "pg": "^8.7.3",

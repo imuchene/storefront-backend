@@ -23,7 +23,7 @@ export class Customer {
   @Column({ type: 'varchar' })
   name: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
   @Column({ name: 'phone_number', type: 'varchar' })

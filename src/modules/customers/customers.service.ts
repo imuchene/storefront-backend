@@ -1,26 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { Customer } from './entities/customer.entity';
 
 @Injectable()
 export class CustomersService {
-  create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
+  constructor(
+    @InjectRepository(Customer)
+    private readonly customersRepository: Repository<Customer>,
+  ) {}
+
+  async getByEmail(email: string): Promise<Customer> {
+    const customer = await this.customersRepository.findOne({ email });
+
+    if (customer) {
+      return customer;
+    }
+
+    throw new NotFoundException('Customer with this email does not exist');
   }
 
-  findAll() {
-    return `This action returns all customers`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
-  }
-
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
+  async create(customerData: CreateCustomerDto): Promise<Customer> {
+    return await this.customersRepository.save(customerData);
   }
 }
