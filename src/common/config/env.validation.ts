@@ -38,6 +38,15 @@ class EnvironmentVariables {
 
   @IsBoolean()
   TYPEORM_LOGGING: boolean;
+
+  @IsString()
+  JWT_SECRET: string;
+  
+  @IsString()
+  JWT_EXPIRY: string;
+
+  @IsString()
+  COOKIE_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

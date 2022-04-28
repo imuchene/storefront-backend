@@ -33,6 +33,9 @@ export class Customer {
   @Column({ name: 'password_digest', type: 'varchar' })
   password: string;
 
+  @Exclude()
+  confirmPassword: string;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamptz',

@@ -1,9 +1,8 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsString } from 'class-validator';
-import { Customer } from '../entities/customer.entity';
+import { IsEmail, IsString } from 'class-validator';
 
-export class CreateCustomerDto extends PartialType(Customer) {
-  @IsString()
+
+export class CreateCustomerDto {
+  @IsEmail()
   email?: string;
 
   @IsString()
@@ -11,4 +10,10 @@ export class CreateCustomerDto extends PartialType(Customer) {
 
   @IsString()
   password?: string;
+
+  @IsString()
+  confirmPassword?: string;
+
+  @IsString()
+  phoneNumber?: string;
 }
