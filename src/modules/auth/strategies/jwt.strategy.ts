@@ -2,11 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { CustomersService } from '../customers/customers.service';
+import { CustomersService } from '../../customers/customers.service';
 import { Request } from 'express';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { Customer } from '../customers/entities/customer.entity';
-
+import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
+import { Customer } from '../../customers/entities/customer.entity';
+import { SecretData } from '../interfaces/secret-data.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -17,19 +17,19 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          const data = request?.cookies['auth-cookie'];
-          if(!data){
+          const data: SecretData = request?.signedCookies['auth-cookie'];
+          if (!data) {
             return null;
           }
-          return data.token;
-        }
+          return data.jwtAccessToken;
+        },
       ]),
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
       ignoreExpiration: false,
     });
   }
 
-  async validate(payload: JwtPayload): Promise<Customer> {
+  async validate(payload: JwtTokenPayload): Promise<Customer> {
     if (payload === null) {
       throw new UnauthorizedException();
     }

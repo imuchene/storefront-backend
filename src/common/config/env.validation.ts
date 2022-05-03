@@ -40,13 +40,34 @@ class EnvironmentVariables {
   TYPEORM_LOGGING: boolean;
 
   @IsString()
-  JWT_SECRET: string;
-  
+  JWT_ACCESS_TOKEN_SECRET: string;
+
   @IsString()
-  JWT_EXPIRY: string;
+  JWT_ACCESS_TOKEN_EXPIRATION_TIME: string;
 
   @IsString()
   COOKIE_SECRET: string;
+
+  @IsString()
+  REDIS_HOST: string;
+
+  @IsNumber()
+  REDIS_PORT: number;
+
+  @IsNumber()
+  REDIS_DB: number;
+
+  @IsString()
+  REDIS_PASSWORD: string;
+
+  @IsString()
+  REDIS_PREFIX: string;
+
+  @IsString()
+  JWT_REFRESH_TOKEN_SECRET: string;
+
+  @IsString()
+  JWT_REFRESH_TOKEN_EXPIRATION_TIME: string;
 }
 
 export function validate(config: Record<string, unknown>) {

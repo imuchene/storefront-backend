@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import dbConfig from './common/config/db.config';
+import redisConfig from './common/config/redis.config';
 import { validate } from './common/config/env.validation';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
@@ -11,12 +12,13 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { RedisModule } from 'nestjs-redis';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [dbConfig],
+      load: [dbConfig, redisConfig],
       validate,
     }),
     TypeOrmModule.forRootAsync({
@@ -30,18 +32,25 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     ProductsModule,
     CustomersModule,
     AuthModule,
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        ...configService.get('redis'),
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: ClassSerializerInterceptor,
-  },
-  {
-    provide: APP_INTERCEPTOR,
-    useClass: LoggingInterceptor,
-  }
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
   ],
 })
 export class AppModule {}
