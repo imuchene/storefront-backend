@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # Ignore environment variables
 .env
+
+# Ignore Secrets
+rsa-keys

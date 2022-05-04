@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
 import { Customer } from '../../customers/entities/customer.entity';
 import { SecretData } from '../interfaces/secret-data.interface';
+import * as fs from 'fs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -24,7 +25,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           return data.jwtAccessToken;
         },
       ]),
-      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey: fs
+        .readFileSync(configService.get<string>('JWT_ACCESS_TOKEN_PUBLIC_KEY'))
+        .toString(),
+
       ignoreExpiration: false,
     });
   }

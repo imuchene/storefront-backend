@@ -6,8 +6,8 @@ import { Request } from 'express';
 import { SecretData } from '../interfaces/secret-data.interface';
 import { AuthService } from '../auth.service';
 import { Customer } from '../../customers/entities/customer.entity';
-import * as util from 'util';
 import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
+import * as fs from 'fs';
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
@@ -18,7 +18,9 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     super({
       ignoreExpiration: true,
       passReqToCallback: true,
-      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey: fs
+        .readFileSync(configService.get<string>('JWT_REFRESH_TOKEN_PUBLIC_KEY'))
+        .toString(),
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           const data: SecretData = request?.signedCookies['auth-cookie'];

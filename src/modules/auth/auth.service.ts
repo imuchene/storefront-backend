@@ -17,6 +17,7 @@ import * as util from 'util';
 import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 @Injectable()
 export class AuthService {
   redisClient: Redis;
@@ -51,7 +52,7 @@ export class AuthService {
         );
       }
 
-      Logger.error('error', util.inspect(error));
+      Logger.error('[authService] registration error', util.inspect(error));
       throw new InternalServerErrorException(
         'Something went wrong during registration',
       );
@@ -99,7 +100,11 @@ export class AuthService {
       customerId: customerId,
     };
     const refreshToken = await this.jwtService.signAsync(this.payload, {
-      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      privateKey: fs
+        .readFileSync(
+          this.configService.get<string>('JWT_REFRESH_TOKEN_PRIVATE_KEY'),
+        )
+        .toString(),
       expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
     });
 
@@ -143,6 +148,24 @@ export class AuthService {
     }
 
     if (savedRefreshToken) {
+      return customer;
+    } else {
+      throw new NotFoundException('The refresh token was not found');
+    }
+  }
+
+  async removeJwtRefreshToken(
+    customerId: string,
+    refreshTokenId: string,
+  ): Promise<Customer> {
+    const customer = await this.customersService.getById(customerId);
+
+    // Delete the encrypted refresh token from redis
+    const deletedResult = await this.redisClient.del(
+      `refresh-token:${customer.id}:${refreshTokenId}`,
+    );
+
+    if (deletedResult === 1) {
       return customer;
     } else {
       throw new NotFoundException('The refresh token was not found');

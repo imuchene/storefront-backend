@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 
-
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('customers')
 export class CustomersController {

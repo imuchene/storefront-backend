@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import * as fs from 'fs';
 
 @Module({
   imports: [
@@ -15,11 +16,21 @@ import { RefreshStrategy } from './strategies/refresh.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        privateKey: fs
+          .readFileSync(
+            configService.get<string>('JWT_ACCESS_TOKEN_PRIVATE_KEY'),
+          )
+          .toString(),
+        publicKey: fs
+          .readFileSync(
+            configService.get<string>('JWT_ACCESS_TOKEN_PUBLIC_KEY'),
+          )
+          .toString(),
         signOptions: {
           expiresIn: configService.get<string>(
             'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
           ),
+          algorithm: 'RS256',
         },
       }),
     }),

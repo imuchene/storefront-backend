@@ -11,7 +11,7 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -22,7 +22,7 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.productsService.findAll();
