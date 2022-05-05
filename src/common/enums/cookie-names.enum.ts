@@ -1,4 +1,4 @@
 export enum CookieNames {
   AuthCookie = 'auth-cookie',
-  RefreshCookie = 'refresh-cookie'
+  RefreshCookie = 'refresh-cookie',
 }

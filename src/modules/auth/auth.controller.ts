@@ -40,7 +40,10 @@ export class AuthController {
       refreshTokenId: refreshTokenId,
     };
 
-    res.cookie(CookieNames.AuthCookie, secretData, { httpOnly: true, signed: true });
+    res.cookie(CookieNames.AuthCookie, secretData, {
+      httpOnly: true,
+      signed: true,
+    });
     return { msg: 'success' };
   }
 
@@ -66,7 +69,10 @@ export class AuthController {
       refreshTokenId: refreshTokenId,
     };
 
-    res.cookie(CookieNames.RefreshCookie, secretData, { httpOnly: true, signed: true });
+    res.cookie(CookieNames.RefreshCookie, secretData, {
+      httpOnly: true,
+      signed: true,
+    });
     return { msg: 'success' };
   }
 
@@ -90,7 +96,10 @@ export class AuthController {
     );
     // Delete auth cookie and refresh cookie
     res.clearCookie(CookieNames.AuthCookie, { signed: true, httpOnly: true });
-    res.clearCookie(CookieNames.RefreshCookie, { signed: true, httpOnly: true });
+    res.clearCookie(CookieNames.RefreshCookie, {
+      signed: true,
+      httpOnly: true,
+    });
     res.send({ msg: 'success' }).end();
   }
 }

@@ -34,4 +34,8 @@ export class ProductsService {
   async remove(id: string): Promise<DeleteResult> {
     return await this.productsRepository.softDelete(id);
   }
+
+  async checkIfProductsExist(productIds: string[]): Promise<Product[]> {
+    return await this.productsRepository.findByIds(productIds);
+  }
 }
