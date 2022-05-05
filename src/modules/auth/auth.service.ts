@@ -18,6 +18,7 @@ import { RedisService } from 'nestjs-redis';
 import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
+import { RedisKeys } from '../../common/enums/redis-keys.enum';
 @Injectable()
 export class AuthService {
   redisClient: Redis;
@@ -114,7 +115,7 @@ export class AuthService {
 
     // Save the hashed access token in redis and set it to expire after a day
     const redisResponse = await this.redisClient.setex(
-      `refresh-token:${customerId}:${refreshTokenId}`,
+      `${RedisKeys.RefreshToken}:${customerId}:${refreshTokenId}`,
       86400,
       hashedRefreshToken,
     );
@@ -134,7 +135,7 @@ export class AuthService {
 
     // Fetch the encrypted refresh token from redis
     const savedRefreshToken = await this.redisClient.get(
-      `refresh-token:${customer.id}:${refreshTokenId}`,
+      `${RedisKeys.RefreshToken}:${customer.id}:${refreshTokenId}`,
     );
 
     // Compare the received refresh token and  what is stored in redis
@@ -162,7 +163,7 @@ export class AuthService {
 
     // Delete the encrypted refresh token from redis
     const deletedResult = await this.redisClient.del(
-      `refresh-token:${customer.id}:${refreshTokenId}`,
+      `${RedisKeys.RefreshToken}:${customer.id}:${refreshTokenId}`,
     );
 
     if (deletedResult === 1) {

@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Post,
   Req,
   Res,
@@ -18,7 +17,7 @@ import { SecretData } from './interfaces/secret-data.interface';
 import { RefreshGuard } from './guards/refresh-auth.guard';
 import * as uuid from 'uuid';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import * as util from 'util';
+import { CookieNames } from '../../common/enums/cookie-names.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -41,7 +40,7 @@ export class AuthController {
       refreshTokenId: refreshTokenId,
     };
 
-    res.cookie('auth-cookie', secretData, { httpOnly: true, signed: true });
+    res.cookie(CookieNames.AuthCookie, secretData, { httpOnly: true, signed: true });
     return { msg: 'success' };
   }
 
@@ -67,7 +66,7 @@ export class AuthController {
       refreshTokenId: refreshTokenId,
     };
 
-    res.cookie('refresh-cookie', secretData, { httpOnly: true, signed: true });
+    res.cookie(CookieNames.RefreshCookie, secretData, { httpOnly: true, signed: true });
     return { msg: 'success' };
   }
 
@@ -82,7 +81,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async logOut(@Req() req: Request, @Res() res: Response) {
     const customer = req.user as Customer;
-    const tokenData: SecretData = req.signedCookies['auth-cookie'];
+    const tokenData: SecretData = req.signedCookies[CookieNames.AuthCookie];
 
     // Remove refresh token from redis
     await this.authService.removeJwtRefreshToken(
@@ -90,8 +89,8 @@ export class AuthController {
       tokenData.refreshTokenId,
     );
     // Delete auth cookie and refresh cookie
-    res.clearCookie('auth-cookie', { signed: true, httpOnly: true });
-    res.clearCookie('refresh-cookie', { signed: true, httpOnly: true });
+    res.clearCookie(CookieNames.AuthCookie, { signed: true, httpOnly: true });
+    res.clearCookie(CookieNames.RefreshCookie, { signed: true, httpOnly: true });
     res.send({ msg: 'success' }).end();
   }
 }
