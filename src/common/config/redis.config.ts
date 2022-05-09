@@ -5,6 +5,7 @@ export default registerAs('redis', () => {
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT),
     db: process.env.REDIS_DB,
+    username: process.env.REDIS_USERNAME,
     password: process.env.REDIS_PASSWORD,
     keyPrefix: process.env.REDIS_PREFIX,
   };

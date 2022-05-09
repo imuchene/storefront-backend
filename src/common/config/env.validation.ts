@@ -55,6 +55,9 @@ class EnvironmentVariables {
   REDIS_DB: number;
 
   @IsString()
+  REDIS_USERNAME: string;
+
+  @IsString()
   REDIS_PASSWORD: string;
 
   @IsString()
