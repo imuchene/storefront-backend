@@ -1,4 +1,8 @@
-import { Injectable, Logger, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Customer } from '../customers/entities/customer.entity';
@@ -19,7 +23,10 @@ export class OrdersService {
     private readonly stripeService: StripeService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto, customer: Customer): Promise<Order> {
+  async create(
+    createOrderDto: CreateOrderDto,
+    customer: Customer,
+  ): Promise<Order> {
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -47,7 +54,10 @@ export class OrdersService {
     Logger.log('saved order', util.inspect(savedOrder));
 
     // Create a payment intent on Stripe
-    const paymentIntent = await this.stripeService.createPaymentIntent(savedOrder.id, savedOrder.totalAmount)
+    const paymentIntent = await this.stripeService.createPaymentIntent(
+      savedOrder.id,
+      savedOrder.totalAmount,
+    );
     const clientSecret = paymentIntent.client_secret;
 
     // Return the client secret to the client as well as the saved order info
@@ -55,37 +65,37 @@ export class OrdersService {
     return updatedOrder;
   }
 
-  async findOrder(id: string): Promise<Order>{
+  async findOrder(id: string): Promise<Order> {
     return await this.ordersRepository.findOneOrFail(id);
   }
 
-  async updateOrder(id: string, order: Order){
+  async updateOrder(id: string, order: Order) {
     await this.findOrder(id);
     await this.ordersRepository.update(id, order);
   }
 
-  async updatePaymentStatus(event: Stripe.Event){
+  async updatePaymentStatus(event: Stripe.Event) {
     Logger.log('stripe data', util.inspect(event));
-    Logger.log('stripe webhook metadata', util.inspect(event.data.object['metadata']));
+    Logger.log(
+      'stripe webhook metadata',
+      util.inspect(event.data.object['metadata']),
+    );
     Logger.log('stripe webhook metadata type', util.inspect(event.type));
 
     // Lookup the order
-    
+
     // Check the event type
 
     switch (event.type) {
       case 'payment_intent.succeeded':
-        
         break;
 
       case 'payment_intent.processing':
-        
         break;
 
       case 'payment_intent.payment_failed':
-        
         break;
-    
+
       default:
         break;
     }

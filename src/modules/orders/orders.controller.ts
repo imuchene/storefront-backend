@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -24,10 +18,8 @@ export class OrdersController {
   }
 
   @Post('stripe_webhook')
-  async webhook(@Body() event: Stripe.Event){
+  async webhook(@Body() event: Stripe.Event) {
     await this.ordersService.updatePaymentStatus(event);
-    return { message: 'success' }
-
+    return { message: 'success' };
   }
-
 }
