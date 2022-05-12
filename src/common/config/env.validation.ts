@@ -68,13 +68,21 @@ class EnvironmentVariables {
 
   @IsString()
   JWT_ACCESS_TOKEN_PUBLIC_KEY: string;
+
   @IsString()
   JWT_ACCESS_TOKEN_PRIVATE_KEY: string;
 
   @IsString()
   JWT_REFRESH_TOKEN_PUBLIC_KEY: string;
+
   @IsString()
   JWT_REFRESH_TOKEN_PRIVATE_KEY: string;
+
+  @IsString()
+  STRIPE_SECRET_KEY: string;
+
+  @IsString()
+  STRIPE_CURRENCY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

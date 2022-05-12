@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { PaymentStatus } from '../../../common/enums/payment-status.enum';
 
 @Entity('orders')
 export class Order {
@@ -27,6 +28,9 @@ export class Order {
 
   @Column({ name: 'total_amount', type: 'numeric' })
   totalAmount: number;
+
+  @Column({ name: 'payment_status', type: 'varchar' })
+  paymentStatus: PaymentStatus;
 
   @CreateDateColumn({
     name: 'created_at',

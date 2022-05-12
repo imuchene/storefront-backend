@@ -13,6 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { RedisModule } from 'nestjs-redis';
+import { StripeModule } from './modules/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { RedisModule } from 'nestjs-redis';
       }),
       inject: [ConfigService],
     }),
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [
