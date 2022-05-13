@@ -4,15 +4,16 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Customer } from '../customers/entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { StripeService } from '../stripe/stripe.service';
 import { Stripe } from 'stripe';
 import * as util from 'util';
+import { PaymentStatus } from '../../common/enums/payment-status.enum';
+import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
 
 @Injectable()
 export class OrdersService {
@@ -51,8 +52,6 @@ export class OrdersService {
     // Save the order including its order items as a transaction
     const savedOrder = await this.ordersRepository.save(order);
 
-    Logger.log('saved order', util.inspect(savedOrder));
-
     // Create a payment intent on Stripe
     const paymentIntent = await this.stripeService.createPaymentIntent(
       savedOrder.id,
@@ -69,41 +68,49 @@ export class OrdersService {
     return await this.ordersRepository.findOneOrFail(id);
   }
 
-  async updateOrder(id: string, order: Order) {
+  async updateOrder(id: string, order: Order): Promise<UpdateResult> {
     await this.findOrder(id);
-    await this.ordersRepository.update(id, order);
+    return await this.ordersRepository.update(id, order);
   }
 
-  async updatePaymentStatus(event: Stripe.Event) {
-    Logger.log('stripe data', util.inspect(event));
-    Logger.log(
-      'stripe webhook metadata',
-      util.inspect(event.data.object['metadata']),
-    );
-    Logger.log('stripe webhook metadata type', util.inspect(event.type));
+  async updatePaymentStatus(event: Stripe.Event): Promise<string> {
+    // Fetch the orderId from the webhook metadata
+    const orderId = event.data.object['metadata'].orderId;
 
     // Lookup the order
+    const order = await this.findOrder(orderId);
 
     // Check the event type
-
     switch (event.type) {
-      case 'payment_intent.succeeded':
+      // If the event type is a succeeded, update the payment status to succeeded
+      case PaymentIntentEvent.Succeeded:
+        order.paymentStatus = PaymentStatus.Succeeded;
         break;
 
-      case 'payment_intent.processing':
+      case PaymentIntentEvent.Processing:
+        // If the event type is processing, update the payment status to processing
+        order.paymentStatus = PaymentStatus.Processing;
         break;
 
-      case 'payment_intent.payment_failed':
+      case PaymentIntentEvent.Failed:
+        // If the event type is payment_failed, update the payment status to payment_failed
+        order.paymentStatus = PaymentStatus.Failed;
         break;
 
       default:
+        // else, by default the payment status should remain as created
+        order.paymentStatus = PaymentStatus.Created;
         break;
     }
 
-    // If the event type is a succeeded, update the payment status to succeeded
+    const updateResult = await this.updateOrder(orderId, order);
 
-    // If the event type is processing, update the payment status to processing
-
-    // If the event type is payment_failed, update the payment status to payment_failed
+    if (updateResult.affected === 1) {
+      return `Record successfully updated with Payment Status ${order.paymentStatus}`;
+    } else {
+      throw new UnprocessableEntityException(
+        'The payment was not successfully updated',
+      );
+    }
   }
 }

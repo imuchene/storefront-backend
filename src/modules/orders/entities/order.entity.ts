@@ -29,7 +29,11 @@ export class Order {
   @Column({ name: 'total_amount', type: 'numeric' })
   totalAmount: number;
 
-  @Column({ name: 'payment_status', type: 'varchar' })
+  @Column({
+    name: 'payment_status',
+    type: 'varchar',
+    default: PaymentStatus.Created,
+  })
   paymentStatus: PaymentStatus;
 
   @CreateDateColumn({
