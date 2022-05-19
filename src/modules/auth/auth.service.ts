@@ -126,7 +126,7 @@ export class AuthService {
     }
   }
 
-  async validateRefreshToken(
+  async validateJwtRefreshToken(
     customerId: string,
     refreshToken: string,
     refreshTokenId: string,

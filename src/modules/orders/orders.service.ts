@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -11,7 +10,6 @@ import { Repository, UpdateResult } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { StripeService } from '../stripe/stripe.service';
 import { Stripe } from 'stripe';
-import * as util from 'util';
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
 import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
 

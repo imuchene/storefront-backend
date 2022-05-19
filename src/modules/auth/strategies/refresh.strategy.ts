@@ -42,7 +42,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     if (!data.jwtRefreshToken) {
       throw new BadRequestException('invalid refresh token');
     }
-    const customer = await this.authService.validateRefreshToken(
+    const customer = await this.authService.validateJwtRefreshToken(
       payload.customerId,
       data.jwtRefreshToken,
       data.refreshTokenId,
