@@ -7,7 +7,6 @@ describe('ProductsService', () => {
   let service: ProductsService;
 
   beforeEach(async () => {
-
     const createMock = jest.fn((dto: any) => {
       return dto;
     });
@@ -34,14 +33,11 @@ describe('ProductsService', () => {
         {
           provide: getRepositoryToken(Product),
           useClass: mockRepository,
-        }
+        },
       ],
     }).compile();
 
     service = module.get<ProductsService>(ProductsService);
-
-
-
   });
 
   it('should be defined', () => {

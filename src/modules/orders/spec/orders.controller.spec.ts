@@ -12,7 +12,7 @@ describe('OrdersController', () => {
         {
           provide: OrdersService,
           useValue: {},
-        }
+        },
       ],
     }).compile();
 

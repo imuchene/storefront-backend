@@ -6,5 +6,4 @@ import {
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('customers')
-export class CustomersController {
-}
+export class CustomersController {}
