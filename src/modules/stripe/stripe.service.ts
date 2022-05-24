@@ -21,6 +21,11 @@ export class StripeService {
     orderId: string,
     totalAmount: number,
   ): Promise<Stripe.PaymentIntent> {
+
+    if(!orderId || totalAmount <  1){
+      throw new UnprocessableEntityException('The payment intent could not be created');
+    }
+
     try {
       const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
         // Total amount to be sent is converted to cents to be used by the Stripe API
