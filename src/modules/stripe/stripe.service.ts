@@ -21,9 +21,10 @@ export class StripeService {
     orderId: string,
     totalAmount: number,
   ): Promise<Stripe.PaymentIntent> {
-
-    if(!orderId || totalAmount <  1){
-      throw new UnprocessableEntityException('The payment intent could not be created');
+    if (!orderId || totalAmount < 1) {
+      throw new UnprocessableEntityException(
+        'The payment intent could not be created',
+      );
     }
 
     try {
