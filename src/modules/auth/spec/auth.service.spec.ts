@@ -21,7 +21,6 @@ describe('AuthService', () => {
     password: 'strongPassword',
   });
   let bcryptCompare: jest.Mock;
-  let readFileSync: jest.Mock;
 
   let customerData: Customer;
   let findCustomer: jest.Mock;
