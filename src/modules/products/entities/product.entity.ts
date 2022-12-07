@@ -29,8 +29,8 @@ export class Product {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'varchar' })
-  image: string;
+  @Column({ name: 'image_url', type: 'varchar' })
+  imageUrl: string;
 
   @CreateDateColumn({
     name: 'created_at',
