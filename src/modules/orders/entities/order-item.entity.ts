@@ -16,9 +16,6 @@ export class OrderItem {
   @PrimaryColumn({ name: 'product_id', type: 'uuid' })
   productId: string;
 
-  @Column({ name: 'unit_price', type: 'numeric' })
-  unitPrice: number;
-
   @Column({ type: 'numeric' })
   quantity: number;
 
