@@ -60,7 +60,7 @@ export class OrdersService {
   }
 
   async findOrder(id: string): Promise<Order> {
-    return await this.ordersRepository.findOneOrFail(id);
+    return await this.ordersRepository.findOneOrFail({ where: { id }});
   }
 
   async updateOrder(id: string, order: Order): Promise<UpdateResult> {
