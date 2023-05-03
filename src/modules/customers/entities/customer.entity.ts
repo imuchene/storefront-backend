@@ -26,7 +26,7 @@ export class Customer {
   @Column({ type: 'varchar', unique: true })
   email: string;
 
-  @Column({ name: 'phone_number', type: 'varchar' })
+  @Column({ name: 'phone_number', type: 'varchar', unique: true })
   phoneNumber: string;
 
   @Exclude()
