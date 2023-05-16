@@ -41,9 +41,14 @@ export class AuthController {
     };
 
     res.cookie(CookieNames.AuthCookie, secretData, {
+      // Set the cookie to expire in 900000 milliseconds = 15 minutes
+      expires: new Date(Date.now() + 900000),
+      sameSite: 'none',
       httpOnly: true,
       signed: true,
+      secure: true
     });
+
     return { msg: 'success' };
   }
 
@@ -70,8 +75,12 @@ export class AuthController {
     };
 
     res.cookie(CookieNames.RefreshCookie, secretData, {
+      // Set the cookie to expire in 900000 milliseconds = 15 minutes
+      expires: new Date(Date.now() + 900000),
+      sameSite: 'none',
       httpOnly: true,
       signed: true,
+      secure: true,
     });
     return { msg: 'success' };
   }
@@ -95,11 +104,20 @@ export class AuthController {
       tokenData.refreshTokenId,
     );
     // Delete auth cookie and refresh cookie
-    res.clearCookie(CookieNames.AuthCookie, { signed: true, httpOnly: true });
+    res.clearCookie(CookieNames.AuthCookie, { 
+      signed: true, 
+      httpOnly: true,       
+      sameSite: 'none',
+      secure: true, 
+    });
+
     res.clearCookie(CookieNames.RefreshCookie, {
       signed: true,
       httpOnly: true,
+      sameSite: 'none',
+      secure: true,
     });
+
     res.send({ msg: 'success' }).end();
   }
 }
