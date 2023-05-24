@@ -41,12 +41,11 @@ export class AuthController {
     };
 
     res.cookie(CookieNames.AuthCookie, secretData, {
-      // Set the cookie to expire in 900000 milliseconds = 15 minutes
-      expires: new Date(Date.now() + 900000),
-      sameSite: 'none',
-      httpOnly: true,
-      signed: true,
-      secure: true
+      expires: new Date(Date.now() + 900000), // Set the cookie to expire in 900000 milliseconds = 15 minutes
+      sameSite: 'none', // allow cross origin requests i.e. requests from different domains (since our frontend is hosted on a different domain)
+      httpOnly: true, // forbid the cookie being accessed by client side javascript
+      signed: true, // prevent the cookie from being tampered with by appending a signature with the cookie
+      secure: true // the cookie can only be sent via a secure protocol i.e. HTTPS (this is also a pre-requisite for using sameSite: none)
     });
 
     return { msg: 'success' };
@@ -75,7 +74,6 @@ export class AuthController {
     };
 
     res.cookie(CookieNames.RefreshCookie, secretData, {
-      // Set the cookie to expire in 900000 milliseconds = 15 minutes
       expires: new Date(Date.now() + 900000),
       sameSite: 'none',
       httpOnly: true,

@@ -55,7 +55,7 @@ export class OrdersService {
     const clientSecret = paymentIntent.client_secret;
 
     // Return the client secret to the client as well as the saved order info
-    const updatedOrder = { ...savedOrder, clientSecret: clientSecret };
+    const updatedOrder = { ...savedOrder, clientSecret: clientSecret, customerName: customer.name };
     return updatedOrder;
   }
 
