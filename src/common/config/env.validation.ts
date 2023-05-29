@@ -83,6 +83,9 @@ class EnvironmentVariables {
 
   @IsString()
   STRIPE_CURRENCY: string;
+
+  @IsString()
+  FRONTEND_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
