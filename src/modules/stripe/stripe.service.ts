@@ -28,9 +28,10 @@ export class StripeService {
     }
 
     try {
+      // Total amount to be sent is converted to cents to be used by the Stripe API
+      const amountToCents = Math.round(Number(totalAmount) * 100);
       const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
-        // Total amount to be sent is converted to cents to be used by the Stripe API
-        amount: Number(totalAmount) * 100,
+        amount: amountToCents,
         currency: this.configService.get<string>('STRIPE_CURRENCY'),
         payment_method_types: ['card', 'klarna', 'alipay'],
         metadata: { orderId: orderId },
