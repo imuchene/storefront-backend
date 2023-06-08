@@ -23,6 +23,7 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     customer: Customer,
   ): Promise<Order> {
+
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -31,7 +32,7 @@ export class OrdersService {
 
     // If none of the products in the order exist, or only some exist, while others
     // do not, throw an exception
-    if (!products || products.length != productIds.length) {
+    if (products.length < 1 || products.length != productIds.length) {
       throw new UnprocessableEntityException(
         'The order could not be processed',
       );
