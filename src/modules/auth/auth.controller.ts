@@ -45,7 +45,7 @@ export class AuthController {
       sameSite: 'none', // allow cross origin requests i.e. requests from different domains (since our frontend is hosted on a different domain)
       httpOnly: true, // forbid the cookie being accessed by client side javascript
       signed: true, // prevent the cookie from being tampered with by appending a signature with the cookie
-      secure: true // the cookie can only be sent via a secure protocol i.e. HTTPS (this is also a pre-requisite for using sameSite: none)
+      secure: true, // the cookie can only be sent via a secure protocol i.e. HTTPS (this is also a pre-requisite for using sameSite: none)
     });
 
     return { msg: 'success' };
@@ -102,11 +102,11 @@ export class AuthController {
       tokenData.refreshTokenId,
     );
     // Delete auth cookie and refresh cookie
-    res.clearCookie(CookieNames.AuthCookie, { 
-      signed: true, 
-      httpOnly: true,       
+    res.clearCookie(CookieNames.AuthCookie, {
+      signed: true,
+      httpOnly: true,
       sameSite: 'none',
-      secure: true, 
+      secure: true,
     });
 
     res.clearCookie(CookieNames.RefreshCookie, {

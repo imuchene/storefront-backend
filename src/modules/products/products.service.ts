@@ -21,7 +21,7 @@ export class ProductsService {
   }
 
   async findOne(id: string): Promise<Product> {
-    return await this.productsRepository.findOne({ where: { id }});
+    return await this.productsRepository.findOne({ where: { id } });
   }
 
   async update(
@@ -36,6 +36,6 @@ export class ProductsService {
   }
 
   async checkIfProductsExist(productIds: string[]): Promise<Product[]> {
-    return await this.productsRepository.findBy({ id: In(productIds)});
+    return await this.productsRepository.findBy({ id: In(productIds) });
   }
 }

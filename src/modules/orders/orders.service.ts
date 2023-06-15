@@ -23,7 +23,6 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     customer: Customer,
   ): Promise<Order> {
-
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -56,12 +55,16 @@ export class OrdersService {
     const clientSecret = paymentIntent.client_secret;
 
     // Return the client secret to the client as well as the saved order info
-    const updatedOrder = { ...savedOrder, clientSecret: clientSecret, customerName: customer.name };
+    const updatedOrder = {
+      ...savedOrder,
+      clientSecret: clientSecret,
+      customerName: customer.name,
+    };
     return updatedOrder;
   }
 
   async findOrder(id: string): Promise<Order> {
-    return await this.ordersRepository.findOneOrFail({ where: { id }});
+    return await this.ordersRepository.findOneOrFail({ where: { id } });
   }
 
   async updateOrder(id: string, order: Order): Promise<UpdateResult> {

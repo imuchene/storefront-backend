@@ -8,7 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   app.useGlobalPipes(new ValidationPipe());
-  app.enableCors({ origin: [configService.get('FRONTEND_URL')], credentials: true });
+  app.enableCors({
+    origin: [configService.get('FRONTEND_URL')],
+    credentials: true,
+  });
   const port = configService.get('PORT');
   app.use(cookieParser(configService.get('COOKIE_SECRET')));
   await app.listen(port);
