@@ -14,6 +14,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { RedisModule } from 'nestjs-redis';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { MpesaModule } from './modules/mpesa/mpesa.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { StripeModule } from './modules/stripe/stripe.module';
       inject: [ConfigService],
     }),
     StripeModule,
+    MpesaModule,
   ],
   controllers: [AppController],
   providers: [
