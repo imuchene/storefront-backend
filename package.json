@@ -25,8 +25,8 @@
     "migrations:run": "npm run typeorm -- migration:run",
     "migrations:revert": "npm run typeorm -- migration:revert",
     "prepush": "npm run format && npm run lint && npm run build && npm test",
-    "seed:run": "node dist/seeder",
-    "seed:refresh": "node dist/seeder --refresh"
+    "seed:run": "ts-node src/seeder",
+    "seed:refresh": "ts-node src/seeder --refresh"
   },
   "dependencies": {
     "@nestjs/common": "^9.4.0",

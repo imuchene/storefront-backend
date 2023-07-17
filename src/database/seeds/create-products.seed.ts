@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { Seeder } from 'nestjs-seeder';
 import { InjectRepository } from '@nestjs/typeorm';
 
-export default class CreateProductsSeeder implements Seeder {
+export class CreateProductsSeeder implements Seeder {
   constructor(
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
