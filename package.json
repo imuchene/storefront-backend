@@ -29,6 +29,7 @@
     "seed:refresh": "ts-node src/seeder --refresh"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.0",
     "@nestjs/common": "^9.4.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.4.0",
@@ -39,6 +40,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/passport-local": "^1.0.35",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

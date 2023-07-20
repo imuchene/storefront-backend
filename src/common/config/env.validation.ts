@@ -86,6 +86,15 @@ class EnvironmentVariables {
 
   @IsString()
   FRONTEND_URL: string;
+
+  @IsString()
+  DARAJA_APP_NAME: string;
+
+  @IsString()
+  DARAJA_CONSUMER_KEY: string;
+
+  @IsString()
+  DARAJA_CONSUMER_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {
