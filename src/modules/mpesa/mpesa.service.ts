@@ -4,11 +4,17 @@ import { ConfigService } from '@nestjs/config';
 import {
   AxiosBasicCredentials,
   AxiosError,
+  AxiosHeaders,
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { MpesaAuth } from './interfaces/mpesa-auth.interface';
+import { DateTime } from 'luxon';
+import { MpesaTransactionTypes } from 'src/common/enums/mpesa-transaction-types.enum';
+import { LipaNaMpesaRequest } from './interfaces/lipa-na-mpesa-request.interface';
+import * as uuid from 'uuid';
+import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interface';
 
 @Injectable()
 export class MpesaService {
@@ -31,6 +37,7 @@ export class MpesaService {
       username: darajaUserName,
       password: darajaUserPassword,
     };
+
     const config: AxiosRequestConfig = {
       auth: auth,
     };
@@ -48,5 +55,61 @@ export class MpesaService {
 
     const mpesaAuth: MpesaAuth = data;
     return mpesaAuth;
+  }
+
+  async createLipaNaMpesaRequest(
+    amount: number,
+    phoneNumber: string,
+  ): Promise<LipaNaMpesaResponse> {
+    const lipaNaMpesaPath = 'mpesa/stkpush/v1/processrequest';
+    const token = await this.generateOauthToken();
+    const timestamp = DateTime.now().toFormat('yyyyLLddHHmmss');
+    const shortcode = this.configService.get<string>(
+      'DARAJA_BUSINESS_SHORTCODE',
+    );
+
+    const passkey = this.configService.get<string>('DARAJA_PASS_KEY');
+
+    const password = Buffer.from(shortcode + passkey + timestamp).toString(
+      'base64',
+    );
+
+    const transactionType = MpesaTransactionTypes.CustomerPayBillOnline;
+    const callbackUrl = 'https://wwww.example.com';
+
+    const lipaNaMpesaRequest: LipaNaMpesaRequest = {
+      BusinessShortCode: shortcode,
+      Password: password,
+      Timestamp: timestamp,
+      TransactionType: transactionType,
+      Amount: String(amount),
+      PartyA: phoneNumber,
+      PartyB: shortcode,
+      PhoneNumber: phoneNumber,
+      CallBackURL: callbackUrl,
+      AccountReference: uuid.v4(),
+      TransactionDesc: 'Lipa na Mpesa Request',
+    };
+
+    const headers = new AxiosHeaders();
+    headers.setAuthorization(`Bearer ${token.access_token}`);
+
+    const config: AxiosRequestConfig = {
+      headers: headers,
+    };
+
+    const url = this.configService.get<string>('DARAJA_URL') + lipaNaMpesaPath;
+
+    const { data }: AxiosResponse = await firstValueFrom(
+      this.httpService.post(url, lipaNaMpesaRequest, config).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data);
+          throw 'An error happened';
+        }),
+      ),
+    );
+
+    const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
+    return lipaNaMpesaResponse;
   }
 }
