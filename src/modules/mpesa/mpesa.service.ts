@@ -11,7 +11,7 @@ import {
 import { catchError, firstValueFrom } from 'rxjs';
 import { MpesaAuth } from './interfaces/mpesa-auth.interface';
 import { DateTime } from 'luxon';
-import { MpesaTransactionTypes } from 'src/common/enums/mpesa-transaction-types.enum';
+import { MpesaTransactionTypes } from '../../common/enums/mpesa-transaction-types.enum';
 import { LipaNaMpesaRequest } from './interfaces/lipa-na-mpesa-request.interface';
 import * as uuid from 'uuid';
 import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interface';
@@ -48,7 +48,7 @@ export class MpesaService {
       this.httpService.get(url, config).pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error.response.data);
-          throw 'An error happened';
+          throw '[MpesaService] Auth Error';
         }),
       ),
     );
@@ -104,7 +104,7 @@ export class MpesaService {
       this.httpService.post(url, lipaNaMpesaRequest, config).pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error.response.data);
-          throw 'An error happened';
+          throw '[MpesaService] Lipa na Mpesa error';
         }),
       ),
     );

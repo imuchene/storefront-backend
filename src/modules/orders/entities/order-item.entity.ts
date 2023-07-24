@@ -1,5 +1,12 @@
 import { Product } from '../../products/entities/product.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  Relation,
+} from 'typeorm';
 import { Order } from './order.entity';
 
 @Entity('order_items')
@@ -21,9 +28,9 @@ export class OrderItem {
 
   @ManyToOne(() => Product, (product) => product.orderItems)
   @JoinColumn({ name: 'product_id', referencedColumnName: 'id' })
-  product: Product;
+  product: Relation<Product>;
 
   @ManyToOne(() => Order, (order) => order.orderItems)
   @JoinColumn({ name: 'order_id', referencedColumnName: 'id' })
-  order: Order;
+  order: Relation<Order>;
 }

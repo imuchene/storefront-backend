@@ -6,6 +6,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -52,5 +53,5 @@ export class Customer {
   updatedAt: string;
 
   @OneToMany(() => Order, (order) => order.customer)
-  orders: Order[];
+  orders: Relation<Order[]>;
 }
