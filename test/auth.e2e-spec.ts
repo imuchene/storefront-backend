@@ -8,9 +8,9 @@ import * as cookieParser from 'cookie-parser';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
-  const testPassword = faker.random.alpha(10);
-  const testFirstName = faker.name.firstName();
-  const testLastName = faker.name.lastName();
+  const testPassword = faker.string.alphanumeric(10);
+  const testFirstName = faker.person.firstName();
+  const testLastName = faker.person.lastName();
   const fakeCustomer = new Customer({
     name: testFirstName + ' ' + testLastName,
     email: `${testFirstName.toLowerCase()}@example.com`,
