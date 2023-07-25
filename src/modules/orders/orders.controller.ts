@@ -4,8 +4,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Request } from 'express';
 import { Customer } from '../customers/entities/customer.entity';
-import { Stripe } from 'stripe';
 import { Order } from './entities/order.entity';
+import Stripe from 'stripe';
 
 @Controller('orders')
 export class OrdersController {
@@ -22,8 +22,8 @@ export class OrdersController {
   }
 
   @Post('stripe_webhook')
-  async webhook(@Body() event: Stripe.Event): Promise<object> {
-    await this.ordersService.updatePaymentStatus(event);
+  async stripeWebhook(@Body() event: Stripe.Event): Promise<object> {
+    await this.ordersService.stripeWebhook(event);
     return { message: 'success' };
   }
 }

@@ -11,7 +11,7 @@ import * as util from 'util';
 export class StripeService {
   readonly stripe: Stripe;
 
-  constructor(readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     this.stripe = new Stripe(configService.get<string>('STRIPE_SECRET_KEY'), {
       apiVersion: '2022-11-15',
     });

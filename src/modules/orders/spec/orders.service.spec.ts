@@ -92,15 +92,15 @@ describe('OrdersService', () => {
     });
   });
 
-  describe('updating an order payment status', () => {
+  describe('calling the stripe webhook', () => {
     it('should return a string', async () => {
       let updateResult: Promise<string>;
       let event: Stripe.Event;
 
       jest
-        .spyOn(service, 'updatePaymentStatus')
+        .spyOn(service, 'stripeWebhook')
         .mockImplementation(() => updateResult);
-      expect(await service.updatePaymentStatus(event)).toBe(updateResult);
+      expect(await service.stripeWebhook(event)).toBe(updateResult);
     });
   });
 });

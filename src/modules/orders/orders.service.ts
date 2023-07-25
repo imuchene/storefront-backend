@@ -6,9 +6,9 @@ import { Order } from './entities/order.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { ProductsService } from '../products/products.service';
 import { StripeService } from '../stripe/stripe.service';
-import { Stripe } from 'stripe';
-import { PaymentStatus } from '../../common/enums/payment-status.enum';
+import Stripe from 'stripe';
 import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
+import { PaymentStatus } from '../../common/enums/payment-status.enum';
 
 @Injectable()
 export class OrdersService {
@@ -72,7 +72,7 @@ export class OrdersService {
     return await this.ordersRepository.update(id, order);
   }
 
-  async updatePaymentStatus(event: Stripe.Event): Promise<string> {
+  async stripeWebhook(event: Stripe.Event): Promise<string> {
     // Fetch the orderId from the webhook metadata
     const orderId = event.data.object['metadata'].orderId;
 

@@ -15,6 +15,7 @@ import { MpesaTransactionTypes } from '../../common/enums/mpesa-transaction-type
 import { LipaNaMpesaRequest } from './interfaces/lipa-na-mpesa-request.interface';
 import * as uuid from 'uuid';
 import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interface';
+import { LipaNaMpesaCallback } from './interfaces/lipa-na-mpesa-callback.interface';
 
 @Injectable()
 export class MpesaService {
@@ -54,6 +55,7 @@ export class MpesaService {
     );
 
     const mpesaAuth: MpesaAuth = data;
+    //todo cache the token before returning its
     return mpesaAuth;
   }
 
@@ -111,5 +113,17 @@ export class MpesaService {
 
     const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
     return lipaNaMpesaResponse;
+  }
+
+  async lipaNaMpesaCallback(callback: LipaNaMpesaCallback): Promise<string>{
+    
+    if (callback.Body.stkCallback.ResultCode === 0) {
+      // Update the order's payment status to success
+    }
+    else {
+    // Update the order's payment status to failed
+    }
+
+    return 'success';
   }
 }

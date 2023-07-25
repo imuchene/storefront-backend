@@ -35,7 +35,7 @@ describe('OrdersController (e2e)', () => {
         clientSecret: 'pi_test_client_secret',
       };
     },
-    updatePaymentStatus: () => {
+    stripeWebhook: () => {
       return { message: 'success' };
     },
   };
@@ -69,9 +69,9 @@ describe('OrdersController (e2e)', () => {
   describe('stripe callback', () => {
     it('updates the order payment status via the webhook', () => {
       return request(app.getHttpServer())
-        .post('/orders/stripe_webhook')
+        .post('/orders/stripe_callback')
         .expect(201)
-        .expect(mockOrdersService.updatePaymentStatus());
+        .expect(mockOrdersService.stripeWebhook());
     });
   });
 
