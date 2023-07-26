@@ -15,25 +15,40 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { RedisModule } from 'nestjs-redis';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { MpesaModule } from './modules/mpesa/mpesa.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { HttpModule } from '@nestjs/axios';
+import { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
+    AuthModule,
+    CustomersModule,
+    CacheModule.registerAsync<RedisClientOptions>({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        store: await redisStore({
+          socket: {
+            host: configService.get('REDIS_HOST'),
+            port: parseInt(configService.get('REDIS_PORT')),
+          },
+          username: configService.get('REDIS_USERNAME'),
+          password: configService.get('REDIS_PASSWORD'),
+          database: configService.get('REDIS_DB'),
+        }),
+      }),
+      inject: [ConfigService],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [dbConfig, redisConfig],
       validate,
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        ...configService.get('database'),
-      }),
-      inject: [ConfigService],
-    }),
+    HttpModule,
+    MpesaModule,
     OrdersModule,
     ProductsModule,
-    CustomersModule,
-    AuthModule,
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -42,7 +57,13 @@ import { MpesaModule } from './modules/mpesa/mpesa.module';
       inject: [ConfigService],
     }),
     StripeModule,
-    MpesaModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('database'),
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [

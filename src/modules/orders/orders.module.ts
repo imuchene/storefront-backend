@@ -10,6 +10,6 @@ import { StripeModule } from '../stripe/stripe.module';
   imports: [TypeOrmModule.forFeature([Order]), ProductsModule, StripeModule],
   controllers: [OrdersController],
   providers: [OrdersService],
-  exports: [OrdersService]
+  exports: [OrdersService],
 })
 export class OrdersModule {}

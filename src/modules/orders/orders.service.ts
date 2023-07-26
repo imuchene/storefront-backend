@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Customer } from '../customers/entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,9 +13,12 @@ import { StripeService } from '../stripe/stripe.service';
 import Stripe from 'stripe';
 import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
+import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
+import * as util from 'util';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
   constructor(
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
@@ -111,5 +118,16 @@ export class OrdersService {
         'The payment was not successfully updated',
       );
     }
+  }
+
+  async lipaNaMpesaCallback(callback: LipaNaMpesaCallback): Promise<string> {
+    this.logger.log('mpesa callback', util.inspect(callback));
+    if (callback.Body.stkCallback.ResultCode === 0) {
+      // Update the order's payment status to success
+    } else {
+      // Update the order's payment status to failed
+    }
+
+    return 'success';
   }
 }

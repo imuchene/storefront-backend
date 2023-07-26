@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { Customer } from '../customers/entities/customer.entity';
 import { Order } from './entities/order.entity';
 import Stripe from 'stripe';
+import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
 
 @Controller('orders')
 export class OrdersController {
@@ -24,6 +25,14 @@ export class OrdersController {
   @Post('stripe_webhook')
   async stripeWebhook(@Body() event: Stripe.Event): Promise<object> {
     await this.ordersService.stripeWebhook(event);
+    return { message: 'success' };
+  }
+
+  @Post('lipa_na_mpesa_callback')
+  async lipaNaMpesaCallback(
+    @Body() callback: LipaNaMpesaCallback,
+  ): Promise<object> {
+    await this.ordersService.lipaNaMpesaCallback(callback);
     return { message: 'success' };
   }
 }

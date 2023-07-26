@@ -98,6 +98,9 @@ class EnvironmentVariables {
 
   @IsString()
   DARAJA_PASS_KEY: string;
+
+  @IsString()
+  DARAJA_CALLBACK_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

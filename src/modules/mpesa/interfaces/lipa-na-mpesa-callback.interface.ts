@@ -9,9 +9,9 @@ export interface Body {
 export interface StkCallback {
   MerchantRequestID: string;
   CheckoutRequestID: string;
-  ResultCode:        number;
-  ResultDesc:        string;
-  CallbackMetadata:  CallbackMetadata;
+  ResultCode: number;
+  ResultDesc: string;
+  CallbackMetadata: CallbackMetadata;
 }
 
 export interface CallbackMetadata {
@@ -19,6 +19,6 @@ export interface CallbackMetadata {
 }
 
 export interface Item {
-  Name:  string;
+  Name: string;
   Value: number | string;
 }

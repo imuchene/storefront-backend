@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   AxiosBasicCredentials,
@@ -15,7 +15,9 @@ import { MpesaTransactionTypes } from '../../common/enums/mpesa-transaction-type
 import { LipaNaMpesaRequest } from './interfaces/lipa-na-mpesa-request.interface';
 import * as uuid from 'uuid';
 import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interface';
-import { LipaNaMpesaCallback } from './interfaces/lipa-na-mpesa-callback.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { RedisKeys } from '../../common/enums/redis-keys.enum';
 
 @Injectable()
 export class MpesaService {
@@ -23,9 +25,19 @@ export class MpesaService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
   ) {}
 
   async generateOauthToken(): Promise<MpesaAuth> {
+    const cachedToken: MpesaAuth = await this.cacheManager.get(
+      RedisKeys.MpesaAuthToken,
+    );
+
+    if (cachedToken) {
+      return cachedToken;
+    }
+
     const darajaAuthpath = 'oauth/v1/generate?grant_type=client_credentials';
     const darajaUserName = this.configService.get<string>(
       'DARAJA_CONSUMER_KEY',
@@ -49,13 +61,18 @@ export class MpesaService {
       this.httpService.get(url, config).pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error.response.data);
+          // todo save failed payment request details
           throw '[MpesaService] Auth Error';
         }),
       ),
     );
 
     const mpesaAuth: MpesaAuth = data;
-    //todo cache the token before returning its
+    await this.cacheManager.set(
+      RedisKeys.MpesaAuthToken,
+      mpesaAuth,
+      3599 * 1000,
+    );
     return mpesaAuth;
   }
 
@@ -63,8 +80,11 @@ export class MpesaService {
     amount: number,
     phoneNumber: string,
   ): Promise<LipaNaMpesaResponse> {
+    // todo save payment request info
+    // todo save:     MerchantRequestID & CheckoutRequestID
     const lipaNaMpesaPath = 'mpesa/stkpush/v1/processrequest';
     const token = await this.generateOauthToken();
+
     const timestamp = DateTime.now().toFormat('yyyyLLddHHmmss');
     const shortcode = this.configService.get<string>(
       'DARAJA_BUSINESS_SHORTCODE',
@@ -77,7 +97,7 @@ export class MpesaService {
     );
 
     const transactionType = MpesaTransactionTypes.CustomerPayBillOnline;
-    const callbackUrl = 'https://wwww.example.com';
+    const callbackUrl = this.configService.get<string>('DARAJA_CALLBACK_URL');
 
     const lipaNaMpesaRequest: LipaNaMpesaRequest = {
       BusinessShortCode: shortcode,
@@ -113,17 +133,5 @@ export class MpesaService {
 
     const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
     return lipaNaMpesaResponse;
-  }
-
-  async lipaNaMpesaCallback(callback: LipaNaMpesaCallback): Promise<string>{
-    
-    if (callback.Body.stkCallback.ResultCode === 0) {
-      // Update the order's payment status to success
-    }
-    else {
-    // Update the order's payment status to failed
-    }
-
-    return 'success';
   }
 }
