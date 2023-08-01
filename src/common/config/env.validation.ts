@@ -39,6 +39,9 @@ class EnvironmentVariables {
   @IsBoolean()
   TYPEORM_LOGGING: boolean;
 
+  @IsBoolean()
+  TYPEORM_MIGRATIONS_RUN: boolean;
+
   @IsString()
   JWT_ACCESS_TOKEN_EXPIRATION_TIME: string;
 

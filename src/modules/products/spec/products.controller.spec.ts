@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from '../products.controller';
 import { ProductsService } from '../products.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ProductsController', () => {
   let controller: ProductsController;
@@ -13,8 +14,13 @@ describe('ProductsController', () => {
           provide: ProductsService,
           useValue: {},
         },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {},
+        },
       ],
-    }).compile();
+    })
+    .compile();
 
     controller = module.get<ProductsController>(ProductsController);
   });

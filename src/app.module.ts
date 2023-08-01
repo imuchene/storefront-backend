@@ -1,9 +1,8 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import dbConfig from './common/config/db.config';
 import redisConfig from './common/config/redis.config';
 import { validate } from './common/config/env.validation';
 import { OrdersModule } from './modules/orders/orders.module';
@@ -19,6 +18,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { HttpModule } from '@nestjs/axios';
 import { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
+import { databaseConfig } from './common/config/database.config';
 
 @Module({
   imports: [
@@ -42,7 +42,7 @@ import { redisStore } from 'cache-manager-redis-yet';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [dbConfig, redisConfig],
+      load: [redisConfig],
       validate,
     }),
     HttpModule,
@@ -59,10 +59,10 @@ import { redisStore } from 'cache-manager-redis-yet';
     StripeModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        ...configService.get('database'),
-      }),
       inject: [ConfigService],
+      useFactory: async (): Promise<TypeOrmModuleOptions> => {
+        return databaseConfig;
+      },
     }),
   ],
   controllers: [AppController],

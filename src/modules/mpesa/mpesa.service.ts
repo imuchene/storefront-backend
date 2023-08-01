@@ -1,5 +1,10 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   AxiosBasicCredentials,
@@ -62,7 +67,7 @@ export class MpesaService {
         catchError((error: AxiosError) => {
           this.logger.error(error.response.data);
           // todo save failed payment request details
-          throw '[MpesaService] Auth Error';
+          throw new UnprocessableEntityException('[MpesaService] Auth Error');
         }),
       ),
     );
@@ -126,7 +131,9 @@ export class MpesaService {
       this.httpService.post(url, lipaNaMpesaRequest, config).pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error.response.data);
-          throw '[MpesaService] Lipa na Mpesa error';
+          throw new UnprocessableEntityException(
+            '[MpesaService] Lipa na Mpesa error',
+          );
         }),
       ),
     );
