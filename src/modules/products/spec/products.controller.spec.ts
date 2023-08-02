@@ -19,8 +19,7 @@ describe('ProductsController', () => {
           useValue: {},
         },
       ],
-    })
-    .compile();
+    }).compile();
 
     controller = module.get<ProductsController>(ProductsController);
   });
