@@ -6,12 +6,15 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
 import { PaymentStatus } from '../../../common/enums/payment-status.enum';
+import { OrderPayment } from '../../payments/entities/order-payment.entity';
+import { PaymentRequest } from '../../payments/entities/payment-request.entity';
 
 @Entity('orders')
 export class Order {
@@ -58,4 +61,10 @@ export class Order {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, { cascade: true })
   orderItems: Relation<OrderItem[]>;
+
+  @OneToOne(() => OrderPayment, (orderPayment) => orderPayment.order)
+  orderPayment: Relation<OrderPayment>;
+
+  @OneToOne(() => PaymentRequest, (paymentRequest) => paymentRequest.order)
+  paymentRequest: Relation<PaymentRequest>;
 }

@@ -19,6 +19,7 @@ import { HttpModule } from '@nestjs/axios';
 import { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
 import { databaseConfig } from './common/config/database.config';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { databaseConfig } from './common/config/database.config';
         return databaseConfig;
       },
     }),
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [
