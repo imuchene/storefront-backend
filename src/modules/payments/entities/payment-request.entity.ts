@@ -1,5 +1,6 @@
 import { Order } from '../../orders/entities/order.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,8 +12,9 @@ import {
 } from 'typeorm';
 
 @Entity('payment_requests')
-export class PaymentRequest {
+export class PaymentRequest extends BaseEntity {
   constructor(intialData: Partial<PaymentRequest> = null) {
+    super();
     if (intialData !== null) {
       Object.assign(this, intialData);
     }

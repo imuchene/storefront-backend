@@ -23,6 +23,10 @@ import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interfa
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { OrderPayment } from '../payments/entities/order-payment.entity';
+import { PaymentRequest } from '../payments/entities/payment-request.entity';
 
 @Injectable()
 export class MpesaService {
@@ -32,6 +36,10 @@ export class MpesaService {
     private readonly configService: ConfigService,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: Cache,
+    @InjectRepository(PaymentRequest)
+    private readonly paymentRequestRepository: Repository<PaymentRequest>,
+    @InjectRepository(OrderPayment)
+    private readonly orderPaymentRepository: Repository<OrderPayment>,
   ) {}
 
   async generateOauthToken(): Promise<MpesaAuth> {

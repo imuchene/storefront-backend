@@ -1,9 +1,12 @@
-import { DataSourceOptions } from 'typeorm';
+import { DataSourceOptions, LogLevel, LoggerOptions } from 'typeorm';
 import 'dotenv/config';
+
+const logLevel: LogLevel = 'error';
+const loggerOptions: LoggerOptions = [logLevel];
 
 export const databaseConfig: DataSourceOptions = {
   type: 'postgres',
-  logging: Boolean(process.env.TYPEORM_LOGGING),
+  logging: loggerOptions,
   host: process.env.DB_MAIN_HOST,
   port: parseInt(process.env.DB_MAIN_PORT),
   username: process.env.DB_MAIN_USER,
