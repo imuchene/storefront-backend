@@ -15,6 +15,8 @@ import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
 import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
 import * as util from 'util';
+import { OrderPayment } from '../payments/entities/order-payment.entity';
+import { PaymentRequest } from '../payments/entities/payment-request.entity';
 
 @Injectable()
 export class OrdersService {
@@ -22,6 +24,10 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly ordersRepository: Repository<Order>,
+    @InjectRepository(PaymentRequest)
+    private readonly paymentRequestRepository: Repository<PaymentRequest>,
+    @InjectRepository(OrderPayment)
+    private readonly orderPaymentRepository: Repository<OrderPayment>,
     private readonly productsService: ProductsService,
     private readonly stripeService: StripeService,
   ) {}
@@ -30,6 +36,7 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     customer: Customer,
   ): Promise<Order> {
+   
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -53,6 +60,10 @@ export class OrdersService {
 
     // Save the order including its order items as a transaction
     const savedOrder = await this.ordersRepository.save(order);
+
+
+     // Save the payment request
+     await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
 
     // Create a payment intent on Stripe
     const paymentIntent = await this.stripeService.createPaymentIntent(
@@ -129,5 +140,30 @@ export class OrdersService {
     }
 
     return 'success';
+  }
+
+  async createPaymentRequest(order: Order, paymentMethod: string): Promise<PaymentRequest>{
+    let provider: string;
+
+    switch (paymentMethod) {
+      case 'mpesa':
+        provider = 'mpesa'
+        break;
+
+      case 'Credit/Debit Card':
+        provider = 'stripe'
+        break;
+    
+      default:
+        break;
+    }
+
+    const paymentRequest = new PaymentRequest({
+      provider: provider,
+      paymentMethod: paymentMethod,
+      orderId: order.id,
+      status: PaymentStatus.Processing
+    })
+    return await this.paymentRequestRepository.save(paymentRequest);
   }
 }

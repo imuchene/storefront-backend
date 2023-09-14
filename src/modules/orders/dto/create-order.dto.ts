@@ -8,4 +8,7 @@ export class CreateOrderDto {
 
   @IsNotEmpty()
   orderItems: OrderItem[];
+
+  @IsNotEmpty()
+  paymentMethod: string;
 }
