@@ -7,9 +7,10 @@ import { ProductsModule } from '../products/products.module';
 import { StripeModule } from '../stripe/stripe.module';
 import { PaymentRequest } from '../payments/entities/payment-request.entity';
 import { OrderPayment } from '../payments/entities/order-payment.entity';
+import { MpesaModule } from '../mpesa/mpesa.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, PaymentRequest, OrderPayment]), ProductsModule, StripeModule],
+  imports: [TypeOrmModule.forFeature([Order, PaymentRequest, OrderPayment]), ProductsModule, StripeModule, MpesaModule],
   controllers: [OrdersController],
   providers: [OrdersService],
   exports: [OrdersService],

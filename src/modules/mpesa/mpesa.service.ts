@@ -23,6 +23,7 @@ import { LipaNaMpesaResponse } from './interfaces/lipa-na-mpesa-response.interfa
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
+import * as util from 'util';
 
 @Injectable()
 export class MpesaService {
@@ -85,7 +86,9 @@ export class MpesaService {
     amount: number,
     phoneNumber: string,
   ): Promise<LipaNaMpesaResponse> {
-    // todo save payment request info
+
+    try {
+       // todo save payment request info
     // todo save:     MerchantRequestID & CheckoutRequestID
     const lipaNaMpesaPath = 'mpesa/stkpush/v1/processrequest';
     const token = await this.generateOauthToken();
@@ -140,5 +143,9 @@ export class MpesaService {
 
     const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
     return lipaNaMpesaResponse;
+    } catch (error) {
+      this.logger.error('Mpesa Error', util.inspect(error));
+    }
+   
   }
 }

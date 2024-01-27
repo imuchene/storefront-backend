@@ -17,6 +17,7 @@ import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.
 import * as util from 'util';
 import { OrderPayment } from '../payments/entities/order-payment.entity';
 import { PaymentRequest } from '../payments/entities/payment-request.entity';
+import { MpesaService } from '../mpesa/mpesa.service';
 
 @Injectable()
 export class OrdersService {
@@ -30,6 +31,7 @@ export class OrdersService {
     private readonly orderPaymentRepository: Repository<OrderPayment>,
     private readonly productsService: ProductsService,
     private readonly stripeService: StripeService,
+    private readonly mpesaService: MpesaService,
   ) {}
 
   async create(
@@ -64,6 +66,12 @@ export class OrdersService {
 
      // Save the payment request
      await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
+
+    this.logger.log('phone number', util.inspect(savedOrder.customer));
+
+     if (createOrderDto.paymentMethod === 'Mpesa') {
+      await this.mpesaService.createLipaNaMpesaRequest(1, '254729508891');
+     }
 
     // Create a payment intent on Stripe
     const paymentIntent = await this.stripeService.createPaymentIntent(
@@ -132,7 +140,7 @@ export class OrdersService {
   }
 
   async lipaNaMpesaCallback(callback: LipaNaMpesaCallback): Promise<string> {
-    this.logger.log('mpesa callback', util.inspect(callback));
+    this.logger.log('callback', JSON.stringify(callback));
     if (callback.Body.stkCallback.ResultCode === 0) {
       // Update the order's payment status to success
     } else {
@@ -143,10 +151,11 @@ export class OrdersService {
   }
 
   async createPaymentRequest(order: Order, paymentMethod: string): Promise<PaymentRequest>{
+
     let provider: string;
 
     switch (paymentMethod) {
-      case 'mpesa':
+      case 'Mpesa':
         provider = 'mpesa'
         break;
 
