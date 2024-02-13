@@ -14,10 +14,10 @@ import Stripe from 'stripe';
 import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
 import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
-import * as util from 'util';
 import { OrderPayment } from '../payments/entities/order-payment.entity';
 import { PaymentRequest } from '../payments/entities/payment-request.entity';
 import { MpesaService } from '../mpesa/mpesa.service';
+import { PaymentMethods } from '../../common/enums/payment-methods.enum';
 
 @Injectable()
 export class OrdersService {
@@ -67,10 +67,9 @@ export class OrdersService {
      // Save the payment request
      await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
 
-    this.logger.log('phone number', util.inspect(savedOrder.customer));
-
-     if (createOrderDto.paymentMethod === 'Mpesa') {
-      await this.mpesaService.createLipaNaMpesaRequest(1, '254729508891');
+     if (createOrderDto.paymentMethod === PaymentMethods.Mpesa) {
+      await this.mpesaService.createLipaNaMpesaRequest(Math.round(savedOrder.totalAmount), customer.phoneNumber);
+      return savedOrder;
      }
 
     // Create a payment intent on Stripe
@@ -155,11 +154,11 @@ export class OrdersService {
     let provider: string;
 
     switch (paymentMethod) {
-      case 'Mpesa':
+      case PaymentMethods.Mpesa:
         provider = 'mpesa'
         break;
 
-      case 'Credit/Debit Card':
+      case PaymentMethods.CreditCard:
         provider = 'stripe'
         break;
     
