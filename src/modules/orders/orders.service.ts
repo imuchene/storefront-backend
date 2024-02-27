@@ -161,6 +161,10 @@ export class OrdersService {
       case PaymentMethods.CreditCard:
         provider = 'stripe'
         break;
+
+      case PaymentMethods.ExpressCheckout:
+        provider = 'express_checkout'
+        break;
     
       default:
         break;
