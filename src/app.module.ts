@@ -20,6 +20,7 @@ import { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
 import { databaseConfig } from './common/config/database.config';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
     AuthModule,
@@ -65,6 +66,10 @@ import { PaymentsModule } from './modules/payments/payments.module';
       },
     }),
     PaymentsModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 10,
+    }]),
   ],
   controllers: [AppController],
   providers: [
