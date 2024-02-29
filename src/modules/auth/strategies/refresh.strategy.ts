@@ -18,6 +18,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     super({
       ignoreExpiration: true,
       passReqToCallback: true,
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename */
       secretOrKey: fs
         .readFileSync(configService.get<string>('JWT_REFRESH_TOKEN_PUBLIC_KEY'))
         .toString(),

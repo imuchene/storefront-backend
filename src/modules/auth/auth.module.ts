@@ -16,11 +16,13 @@ import * as fs from 'fs';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
+        /* eslint-disable-next-line security/detect-non-literal-fs-filename */
         privateKey: fs
           .readFileSync(
             configService.get<string>('JWT_ACCESS_TOKEN_PRIVATE_KEY'),
           )
           .toString(),
+        /* eslint-disable-next-line security/detect-non-literal-fs-filename */
         publicKey: fs
           .readFileSync(
             configService.get<string>('JWT_ACCESS_TOKEN_PUBLIC_KEY'),

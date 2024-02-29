@@ -12,9 +12,12 @@ export class StripeService {
   readonly stripe: Stripe;
 
   constructor(private readonly configService: ConfigService) {
-    this.stripe = new Stripe(configService.get<string>('STRIPE_SECRET_KEY'), {
-      apiVersion: '2022-11-15',
-    });
+    this.stripe = new Stripe(
+      configService.getOrThrow<string>('STRIPE_SECRET_KEY'),
+      {
+        apiVersion: '2022-11-15',
+      },
+    );
   }
 
   async createPaymentIntent(
@@ -32,7 +35,7 @@ export class StripeService {
       const amountToCents = Math.round(Number(totalAmount) * 100);
       const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
         amount: amountToCents,
-        currency: this.configService.get<string>('STRIPE_CURRENCY'),
+        currency: this.configService.getOrThrow<string>('STRIPE_CURRENCY'),
         payment_method_types: ['card', 'klarna', 'alipay'],
         metadata: { orderId: orderId },
       };

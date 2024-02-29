@@ -4,11 +4,9 @@ import { MpesaController } from './mpesa.controller';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [
-    HttpModule,
-  ],
+  imports: [HttpModule],
   providers: [MpesaService],
   controllers: [MpesaController],
-  exports: [MpesaService]
+  exports: [MpesaService],
 })
 export class MpesaModule {}

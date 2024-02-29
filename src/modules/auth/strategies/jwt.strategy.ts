@@ -25,6 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
           return data.jwtAccessToken;
         },
       ]),
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename */
       secretOrKey: fs
         .readFileSync(configService.get<string>('JWT_ACCESS_TOKEN_PUBLIC_KEY'))
         .toString(),

@@ -74,11 +74,7 @@ export class MpesaService {
     );
 
     const mpesaAuth: MpesaAuth = data;
-    await this.cacheManager.set(
-      RedisKeys.MpesaAuthToken,
-      mpesaAuth,
-      3599 * 1000,
-    );
+    await this.cacheManager.set(RedisKeys.MpesaAuthToken, mpesaAuth, 86400);
     return mpesaAuth;
   }
 
@@ -86,66 +82,65 @@ export class MpesaService {
     amount: number,
     phoneNumber: string,
   ): Promise<LipaNaMpesaResponse> {
-
     try {
-       // todo save payment request info
-    // todo save:     MerchantRequestID & CheckoutRequestID
-    const lipaNaMpesaPath = 'mpesa/stkpush/v1/processrequest';
-    const token = await this.generateOauthToken();
+      // todo save payment request info
+      // todo save:     MerchantRequestID & CheckoutRequestID
+      const lipaNaMpesaPath = 'mpesa/stkpush/v1/processrequest';
+      const token = await this.generateOauthToken();
 
-    const timestamp = DateTime.now().toFormat('yyyyLLddHHmmss');
-    const shortcode = this.configService.get<string>(
-      'DARAJA_BUSINESS_SHORTCODE',
-    );
+      const timestamp = DateTime.now().toFormat('yyyyLLddHHmmss');
+      const shortcode = this.configService.get<string>(
+        'DARAJA_BUSINESS_SHORTCODE',
+      );
 
-    const passkey = this.configService.get<string>('DARAJA_PASS_KEY');
+      const passkey = this.configService.get<string>('DARAJA_PASS_KEY');
 
-    const password = Buffer.from(shortcode + passkey + timestamp).toString(
-      'base64',
-    );
+      const password = Buffer.from(shortcode + passkey + timestamp).toString(
+        'base64',
+      );
 
-    const transactionType = MpesaTransactionTypes.CustomerPayBillOnline;
-    const callbackUrl = this.configService.get<string>('DARAJA_CALLBACK_URL');
+      const transactionType = MpesaTransactionTypes.CustomerPayBillOnline;
+      const callbackUrl = this.configService.get<string>('DARAJA_CALLBACK_URL');
 
-    const lipaNaMpesaRequest: LipaNaMpesaRequest = {
-      BusinessShortCode: shortcode,
-      Password: password,
-      Timestamp: timestamp,
-      TransactionType: transactionType,
-      Amount: String(amount),
-      PartyA: phoneNumber,
-      PartyB: shortcode,
-      PhoneNumber: phoneNumber,
-      CallBackURL: callbackUrl,
-      AccountReference: uuid.v4(),
-      TransactionDesc: 'Lipa na Mpesa Request',
-    };
+      const lipaNaMpesaRequest: LipaNaMpesaRequest = {
+        BusinessShortCode: shortcode,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: transactionType,
+        Amount: String(amount),
+        PartyA: phoneNumber,
+        PartyB: shortcode,
+        PhoneNumber: phoneNumber,
+        CallBackURL: callbackUrl,
+        AccountReference: uuid.v4(),
+        TransactionDesc: 'Lipa na Mpesa Request',
+      };
 
-    const headers = new AxiosHeaders();
-    headers.setAuthorization(`Bearer ${token.access_token}`);
+      const headers = new AxiosHeaders();
+      headers.setAuthorization(`Bearer ${token.access_token}`);
 
-    const config: AxiosRequestConfig = {
-      headers: headers,
-    };
+      const config: AxiosRequestConfig = {
+        headers: headers,
+      };
 
-    const url = this.configService.get<string>('DARAJA_URL') + lipaNaMpesaPath;
+      const url =
+        this.configService.get<string>('DARAJA_URL') + lipaNaMpesaPath;
 
-    const { data }: AxiosResponse = await firstValueFrom(
-      this.httpService.post(url, lipaNaMpesaRequest, config).pipe(
-        catchError((error: AxiosError) => {
-          this.logger.error(error.response.data);
-          throw new UnprocessableEntityException(
-            '[MpesaService] Lipa na Mpesa error',
-          );
-        }),
-      ),
-    );
+      const { data }: AxiosResponse = await firstValueFrom(
+        this.httpService.post(url, lipaNaMpesaRequest, config).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(error.response.data);
+            throw new UnprocessableEntityException(
+              '[MpesaService] Lipa na Mpesa error',
+            );
+          }),
+        ),
+      );
 
-    const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
-    return lipaNaMpesaResponse;
+      const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
+      return lipaNaMpesaResponse;
     } catch (error) {
       this.logger.error('Mpesa Error', util.inspect(error));
     }
-   
   }
 }

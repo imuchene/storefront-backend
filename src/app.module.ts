@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import redisConfig from './common/config/redis.config';
 import { validate } from './common/config/env.validation';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
@@ -11,7 +10,6 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { RedisModule } from 'nestjs-redis';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { MpesaModule } from './modules/mpesa/mpesa.module';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -32,31 +30,23 @@ import { ThrottlerModule } from '@nestjs/throttler';
         store: await redisStore({
           socket: {
             host: configService.get('REDIS_HOST'),
-            port: parseInt(configService.get('REDIS_PORT')),
+            port: parseInt(configService.getOrThrow('REDIS_PORT')),
           },
-          username: configService.get('REDIS_USERNAME'),
-          password: configService.get('REDIS_PASSWORD'),
-          database: configService.get('REDIS_DB'),
+          username: configService.getOrThrow('REDIS_USERNAME'),
+          password: configService.getOrThrow('REDIS_PASSWORD'),
+          database: configService.getOrThrow('REDIS_DB'),
         }),
       }),
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [redisConfig],
       validate,
     }),
     HttpModule,
     MpesaModule,
     OrdersModule,
     ProductsModule,
-    RedisModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.get('redis'),
-      }),
-      inject: [ConfigService],
-    }),
     StripeModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -66,10 +56,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
       },
     }),
     PaymentsModule,
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 10,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [

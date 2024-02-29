@@ -38,7 +38,6 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     customer: Customer,
   ): Promise<Order> {
-   
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -63,14 +62,16 @@ export class OrdersService {
     // Save the order including its order items as a transaction
     const savedOrder = await this.ordersRepository.save(order);
 
+    // Save the payment request
+    await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
 
-     // Save the payment request
-     await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
-
-     if (createOrderDto.paymentMethod === PaymentMethods.Mpesa) {
-      await this.mpesaService.createLipaNaMpesaRequest(Math.round(savedOrder.totalAmount), customer.phoneNumber);
+    if (createOrderDto.paymentMethod === PaymentMethods.Mpesa) {
+      await this.mpesaService.createLipaNaMpesaRequest(
+        Math.round(savedOrder.totalAmount),
+        customer.phoneNumber,
+      );
       return savedOrder;
-     }
+    }
 
     // Create a payment intent on Stripe
     const paymentIntent = await this.stripeService.createPaymentIntent(
@@ -89,7 +90,7 @@ export class OrdersService {
   }
 
   async findOrder(id: string): Promise<Order> {
-    return await this.ordersRepository.findOneByOrFail({id});
+    return await this.ordersRepository.findOneByOrFail({ id });
   }
 
   async updateOrder(id: string, order: Order): Promise<UpdateResult> {
@@ -149,23 +150,25 @@ export class OrdersService {
     return 'success';
   }
 
-  async createPaymentRequest(order: Order, paymentMethod: string): Promise<PaymentRequest>{
-
+  async createPaymentRequest(
+    order: Order,
+    paymentMethod: string,
+  ): Promise<PaymentRequest> {
     let provider: string;
 
     switch (paymentMethod) {
       case PaymentMethods.Mpesa:
-        provider = 'mpesa'
+        provider = 'mpesa';
         break;
 
       case PaymentMethods.CreditCard:
-        provider = 'stripe'
+        provider = 'stripe';
         break;
 
       case PaymentMethods.ExpressCheckout:
-        provider = 'express_checkout'
+        provider = 'express_checkout';
         break;
-    
+
       default:
         break;
     }
@@ -174,8 +177,8 @@ export class OrdersService {
       provider: provider,
       paymentMethod: paymentMethod,
       orderId: order.id,
-      status: PaymentStatus.Processing
-    })
+      status: PaymentStatus.Processing,
+    });
     return await this.paymentRequestRepository.save(paymentRequest);
   }
 }

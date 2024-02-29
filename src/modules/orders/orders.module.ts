@@ -10,7 +10,12 @@ import { OrderPayment } from '../payments/entities/order-payment.entity';
 import { MpesaModule } from '../mpesa/mpesa.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, PaymentRequest, OrderPayment]), ProductsModule, StripeModule, MpesaModule],
+  imports: [
+    TypeOrmModule.forFeature([Order, PaymentRequest, OrderPayment]),
+    ProductsModule,
+    StripeModule,
+    MpesaModule,
+  ],
   controllers: [OrdersController],
   providers: [OrdersService],
   exports: [OrdersService],

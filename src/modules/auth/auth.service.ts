@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -14,24 +15,23 @@ import { Customer } from '../customers/entities/customer.entity';
 import { JwtTokenPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import * as util from 'util';
-import { RedisService } from 'nestjs-redis';
-import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+
 @Injectable()
 export class AuthService {
-  redisClient: Redis;
   payload: JwtTokenPayload;
 
   constructor(
     private readonly customersService: CustomersService,
     private readonly jwtService: JwtService,
-    private readonly redisService: RedisService,
     private readonly configService: ConfigService,
-  ) {
-    this.redisClient = this.redisService.getClient();
-  }
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
+  ) {}
 
   async register(registrationData: CreateCustomerDto): Promise<Customer> {
     if (registrationData.password !== registrationData.confirmPassword) {
@@ -101,12 +101,18 @@ export class AuthService {
       customerId: customerId,
     };
     const refreshToken = await this.jwtService.signAsync(this.payload, {
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename */
       privateKey: fs
         .readFileSync(
-          this.configService.get<string>('JWT_REFRESH_TOKEN_PRIVATE_KEY'),
+          this.configService.getOrThrow<string>(
+            'JWT_REFRESH_TOKEN_PRIVATE_KEY',
+          ),
         )
         .toString(),
-      expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename */
+      expiresIn: this.configService.getOrThrow(
+        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+      ),
     });
 
     // Encrypt the refresh token before storing it in redis
@@ -114,16 +120,14 @@ export class AuthService {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
 
     // Save the hashed access token in redis and set it to expire after a day
-    const redisResponse = await this.redisClient.setex(
+    await this.cacheManager.set(
       `${RedisKeys.RefreshToken}:${customerId}:${refreshTokenId}`,
-      86400,
       hashedRefreshToken,
+      86400,
     );
 
     // Return the unencrypted refresh token back to the customer
-    if (redisResponse === 'OK') {
-      return refreshToken;
-    }
+    return refreshToken;
   }
 
   async validateJwtRefreshToken(
@@ -134,7 +138,7 @@ export class AuthService {
     const customer = await this.customersService.getById(customerId);
 
     // Fetch the encrypted refresh token from redis
-    const savedRefreshToken = await this.redisClient.get(
+    const savedRefreshToken = await this.cacheManager.get<string>(
       `${RedisKeys.RefreshToken}:${customer.id}:${refreshTokenId}`,
     );
 
@@ -160,16 +164,10 @@ export class AuthService {
     refreshTokenId: string,
   ): Promise<Customer> {
     const customer = await this.customersService.getById(customerId);
-
-    // Delete the encrypted refresh token from redis
-    const deletedResult = await this.redisClient.del(
+    // Delete the encrypted refresh token from redis and return the customer info
+    await this.cacheManager.del(
       `${RedisKeys.RefreshToken}:${customer.id}:${refreshTokenId}`,
     );
-
-    if (deletedResult === 1) {
-      return customer;
-    } else {
-      throw new NotFoundException('The refresh token was not found');
-    }
+    return customer;
   }
 }
