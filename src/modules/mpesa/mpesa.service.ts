@@ -24,6 +24,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
 import * as util from 'util';
+import { LipaNaMpesaParams } from './interfaces/lipa-na-mpesa-params.interface';
 
 @Injectable()
 export class MpesaService {
@@ -74,13 +75,17 @@ export class MpesaService {
     );
 
     const mpesaAuth: MpesaAuth = data;
-    await this.cacheManager.set(RedisKeys.MpesaAuthToken, mpesaAuth, 86400);
+    // Cache the auth token for 1 hour
+    await this.cacheManager.set(
+      RedisKeys.MpesaAuthToken,
+      mpesaAuth,
+      3599 * 1000,
+    );
     return mpesaAuth;
   }
 
   async createLipaNaMpesaRequest(
-    amount: number,
-    phoneNumber: string,
+    lipaNaMpesaParams: LipaNaMpesaParams,
   ): Promise<LipaNaMpesaResponse> {
     try {
       // todo save payment request info
@@ -107,10 +112,10 @@ export class MpesaService {
         Password: password,
         Timestamp: timestamp,
         TransactionType: transactionType,
-        Amount: String(amount),
-        PartyA: phoneNumber,
+        Amount: String(lipaNaMpesaParams.amount),
+        PartyA: lipaNaMpesaParams.phoneNumber,
         PartyB: shortcode,
-        PhoneNumber: phoneNumber,
+        PhoneNumber: lipaNaMpesaParams.phoneNumber,
         CallBackURL: callbackUrl,
         AccountReference: uuid.v4(),
         TransactionDesc: 'Lipa na Mpesa Request',

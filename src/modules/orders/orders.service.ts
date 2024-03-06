@@ -18,6 +18,7 @@ import { OrderPayment } from '../payments/entities/order-payment.entity';
 import { PaymentRequest } from '../payments/entities/payment-request.entity';
 import { MpesaService } from '../mpesa/mpesa.service';
 import { PaymentMethods } from '../../common/enums/payment-methods.enum';
+import { LipaNaMpesaParams } from '../mpesa/interfaces/lipa-na-mpesa-params.interface';
 
 @Injectable()
 export class OrdersService {
@@ -66,10 +67,11 @@ export class OrdersService {
     await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
 
     if (createOrderDto.paymentMethod === PaymentMethods.Mpesa) {
-      await this.mpesaService.createLipaNaMpesaRequest(
-        Math.round(savedOrder.totalAmount),
-        customer.phoneNumber,
-      );
+      const lipaNaMpesaParams: LipaNaMpesaParams = {
+        amount: Math.round(savedOrder.totalAmount),
+        phoneNumber: customer.phoneNumber,
+      };
+      await this.mpesaService.createLipaNaMpesaRequest(lipaNaMpesaParams);
       return savedOrder;
     }
 

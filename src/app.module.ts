@@ -19,6 +19,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { databaseConfig } from './common/config/database.config';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bull';
 @Module({
   imports: [
     AuthModule,
@@ -62,6 +63,20 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 10,
       },
     ]),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.getOrThrow<number>('REDIS_PORT'),
+          username: configService.getOrThrow<string>('REDIS_USERNAME'),
+          password: configService.getOrThrow<string>('REDIS_PASSWORD'),
+          db: configService.getOrThrow<number>('REDIS_DB'),
+          keyPrefix: configService.getOrThrow('REDIS_PREFIX'),
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
