@@ -5,10 +5,13 @@ import { HttpModule } from '@nestjs/axios';
 import { BullModule } from '@nestjs/bull';
 import { MpesaProcessor } from './mpesa.processor';
 import { MpesaProducer } from './mpesa.producer';
+import { QueueNames } from '../../common/enums/queue-names.enum';
 
 @Module({
-  // todo add enums for queue names
-  imports: [HttpModule, BullModule.registerQueueAsync({ name: 'mpesa' })],
+  imports: [
+    HttpModule,
+    BullModule.registerQueueAsync({ name: QueueNames.Mpesa }),
+  ],
   providers: [MpesaService, MpesaProcessor, MpesaProducer],
   controllers: [MpesaController],
   exports: [MpesaService],

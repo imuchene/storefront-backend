@@ -2,12 +2,13 @@ import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { BackoffOptions, JobOptions, Queue } from 'bull';
 import { LipaNaMpesaParams } from './interfaces/lipa-na-mpesa-params.interface';
+import { QueueNames } from '../../common/enums/queue-names.enum';
+import { QueueJobNames } from '../../common/enums/queue-job-names.enum';
 
 @Injectable()
 export class MpesaProducer {
   constructor(
-    // todo add enums for queue names
-    @InjectQueue('mpesa')
+    @InjectQueue(QueueNames.Mpesa)
     private readonly mpesaQueue: Queue,
   ) {}
 
@@ -25,12 +26,11 @@ export class MpesaProducer {
       timeout: 30 * 1000,
     };
 
-    // todo add enums for job names
     const job = await this.mpesaQueue.add(
-      'processLipaNaMpesaTransaction',
+      QueueJobNames.LipaNaMpesaTransaction,
       lipaNaMpesaParams,
       jobOptions,
     );
-    return job.data;
+    return job;
   }
 }

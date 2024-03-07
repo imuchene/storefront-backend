@@ -1,9 +1,7 @@
 import {
   OnQueueActive,
   OnQueueCompleted,
-  OnQueueEvent,
   OnQueueFailed,
-  OnQueueStalled,
   Process,
   Processor,
 } from '@nestjs/bull';
@@ -12,23 +10,22 @@ import { Job } from 'bull';
 import { LipaNaMpesaParams } from './interfaces/lipa-na-mpesa-params.interface';
 import * as util from 'util';
 import { Logger } from '@nestjs/common';
+import { QueueNames } from '../../common/enums/queue-names.enum';
+import { QueueJobNames } from '../../common/enums/queue-job-names.enum';
 
-// todo use an enum for queue names
-@Processor('mpesa')
+@Processor(QueueNames.Mpesa)
 export class MpesaProcessor {
   private readonly logger = new Logger(MpesaProcessor.name);
 
-  constructor(private mpesaService: MpesaService) {}
+  constructor(private readonly mpesaService: MpesaService) {}
 
-  // todo use an enum for job names
-  @Process({ name: 'processLipaNaMpesaTransaction' })
+  @Process({ name: QueueJobNames.LipaNaMpesaTransaction })
   async processLipaNaMpesaTransaction(job: Job) {
-    this.logger.debug('start processing...');
     const data: LipaNaMpesaParams = job.data;
     return this.mpesaService.createLipaNaMpesaRequest(data);
   }
 
-  @OnQueueActive({ name: 'processLipaNaMpesaTransaction' })
+  @OnQueueActive({ name: QueueJobNames.LipaNaMpesaTransaction })
   async onMpesaActive(job: Job) {
     this.logger.log(
       `Attempting to post a lipa na mpesa request with data ${util.inspect(
@@ -37,7 +34,7 @@ export class MpesaProcessor {
     );
   }
 
-  @OnQueueFailed({ name: 'processLipaNaMpesaTransaction' })
+  @OnQueueFailed({ name: QueueJobNames.LipaNaMpesaTransaction })
   async onMpesaFail(job: Job) {
     this.logger.log(
       `Attempting to post a lipa na mpesa request with data ${util.inspect(
@@ -46,24 +43,10 @@ export class MpesaProcessor {
     );
   }
 
-  @OnQueueStalled({ name: 'processLipaNaMpesaTransaction' })
-  async onMpesaStall(job: Job) {
-    this.logger.log(
-      `Attempting to post a lipa na mpesa request with data ${util.inspect(
-        job.data,
-      )}`,
-    );
-  }
-
-  @OnQueueCompleted({ name: 'processLipaNaMpesaTransaction' })
+  @OnQueueCompleted({ name: QueueJobNames.LipaNaMpesaTransaction })
   async onMpesaCompleted(job: Job) {
     this.logger.log(
       `The lipa na mpesa payment request with data ${job.data} has been posted successfully.`,
     );
   }
-  
-  @OnQueueEvent('active')
-  async test(){
-    this.logger.log('This is a test');
-    }
-  }
+}
