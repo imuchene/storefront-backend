@@ -22,7 +22,7 @@ export class MpesaProcessor {
   @Process({ name: QueueJobNames.LipaNaMpesaTransaction })
   async processLipaNaMpesaTransaction(job: Job) {
     const data: LipaNaMpesaParams = job.data;
-    return this.mpesaService.createLipaNaMpesaRequest(data);
+    return await this.mpesaService.createLipaNaMpesaRequest(data);
   }
 
   @OnQueueActive({ name: QueueJobNames.LipaNaMpesaTransaction })

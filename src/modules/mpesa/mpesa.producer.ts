@@ -31,6 +31,7 @@ export class MpesaProducer {
       lipaNaMpesaParams,
       jobOptions,
     );
+    
     return job;
   }
 }
