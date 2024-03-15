@@ -104,6 +104,9 @@ class EnvironmentVariables {
 
   @IsString()
   DARAJA_CALLBACK_URL: string;
+
+  @IsString()
+  RABBITMQ_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

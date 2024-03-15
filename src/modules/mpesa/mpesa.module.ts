@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MpesaService } from './mpesa.service';
-import { MpesaController } from './mpesa.controller';
 import { HttpModule } from '@nestjs/axios';
+import { MpesaConsumer } from './mpesa.consumer';
+import { MpesaProducer } from './mpesa.producer';
 
 @Module({
   imports: [HttpModule],
-  providers: [MpesaService],
-  controllers: [MpesaController],
-  exports: [MpesaService],
+  providers: [MpesaService, MpesaConsumer, MpesaProducer],
+  exports: [MpesaService, MpesaProducer],
 })
 export class MpesaModule {}
