@@ -5,7 +5,7 @@ import { QueueNames } from '../../../common/enums/queue-names.enum';
 
 describe('Enqueuer Service', () => {
   let mpesaProducer: MpesaProducer;
-  let mockQueue;
+  let mockQueue: any;
 
   beforeAll(async () => {
     mockQueue = {
