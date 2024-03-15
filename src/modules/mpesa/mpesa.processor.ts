@@ -21,8 +21,13 @@ export class MpesaProcessor {
 
   @Process({ name: QueueJobNames.LipaNaMpesaTransaction })
   async processLipaNaMpesaTransaction(job: Job) {
-    const data: LipaNaMpesaParams = job.data;
-    return await this.mpesaService.createLipaNaMpesaRequest(data);
+    try {
+      const data: LipaNaMpesaParams = job.data;
+      return await this.mpesaService.createLipaNaMpesaRequest(data);
+    } catch (error) {
+      this.logger.error('Error occurred', error);
+      throw new Error(error);
+    }
   }
 
   @OnQueueActive({ name: QueueJobNames.LipaNaMpesaTransaction })
@@ -37,9 +42,9 @@ export class MpesaProcessor {
   @OnQueueFailed({ name: QueueJobNames.LipaNaMpesaTransaction })
   async onMpesaFail(job: Job) {
     this.logger.log(
-      `Attempting to post a lipa na mpesa request with data ${util.inspect(
+      `The lipa na mpesa request with data ${util.inspect(
         job.data,
-      )}`,
+      )} has failed`,
     );
   }
 

@@ -14,11 +14,10 @@ import Stripe from 'stripe';
 import { PaymentIntentEvent } from '../../common/enums/payment-intent-event.enum';
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
 import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
-import { OrderPayment } from '../payments/entities/order-payment.entity';
 import { PaymentRequest } from '../payments/entities/payment-request.entity';
-import { MpesaService } from '../mpesa/mpesa.service';
 import { PaymentMethods } from '../../common/enums/payment-methods.enum';
 import { LipaNaMpesaParams } from '../mpesa/interfaces/lipa-na-mpesa-params.interface';
+import { MpesaProducer } from '../mpesa/mpesa.producer';
 
 @Injectable()
 export class OrdersService {
@@ -28,11 +27,9 @@ export class OrdersService {
     private readonly ordersRepository: Repository<Order>,
     @InjectRepository(PaymentRequest)
     private readonly paymentRequestRepository: Repository<PaymentRequest>,
-    @InjectRepository(OrderPayment)
-    private readonly orderPaymentRepository: Repository<OrderPayment>,
     private readonly productsService: ProductsService,
     private readonly stripeService: StripeService,
-    private readonly mpesaService: MpesaService,
+    private readonly mpesaProducer: MpesaProducer,
   ) {}
 
   async create(
@@ -71,7 +68,11 @@ export class OrdersService {
         amount: Math.round(savedOrder.totalAmount),
         phoneNumber: customer.phoneNumber,
       };
-      await this.mpesaService.createLipaNaMpesaRequest(lipaNaMpesaParams);
+
+      await this.mpesaProducer.createLipaNaMpesaRequestViaProducer(
+        lipaNaMpesaParams,
+      );
+
       return savedOrder;
     }
 

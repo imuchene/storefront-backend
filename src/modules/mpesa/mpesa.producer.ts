@@ -17,7 +17,7 @@ export class MpesaProducer {
   ): Promise<any> {
     const backOffOptions: BackoffOptions = {
       type: 'fixed',
-      delay: 3 * 1000,
+      delay: 5 * 1000,
     };
 
     const jobOptions: JobOptions = {
@@ -31,7 +31,7 @@ export class MpesaProducer {
       lipaNaMpesaParams,
       jobOptions,
     );
-    
+
     return job;
   }
 }

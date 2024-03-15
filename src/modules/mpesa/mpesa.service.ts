@@ -146,6 +146,7 @@ export class MpesaService {
       return lipaNaMpesaResponse;
     } catch (error) {
       this.logger.error('Mpesa Error', util.inspect(error));
+      throw new Error(error);
     }
   }
 }
