@@ -36,6 +36,13 @@ export class OrdersService {
     createOrderDto: CreateOrderDto,
     customer: Customer,
   ): Promise<Order> {
+    // Check if the order exists, and if it does, return the order
+    const existingOrder = await this.findOrder(createOrderDto.id);
+
+    if (existingOrder) {
+      return existingOrder;
+    }
+
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
     const products = await this.productsService.checkIfProductsExist(
@@ -51,6 +58,7 @@ export class OrdersService {
     }
 
     const order = new Order({
+      id: createOrderDto.id,
       customerId: customer.id,
       totalAmount: createOrderDto.totalAmount,
     });
@@ -63,6 +71,7 @@ export class OrdersService {
     // Save the payment request
     await this.createPaymentRequest(savedOrder, createOrderDto.paymentMethod);
 
+    // If the request is a lipa na mpesa request, queue the request
     if (createOrderDto.paymentMethod === PaymentMethods.Mpesa) {
       const lipaNaMpesaParams: LipaNaMpesaParams = {
         amount: Math.round(savedOrder.totalAmount),
@@ -93,7 +102,7 @@ export class OrdersService {
   }
 
   async findOrder(id: string): Promise<Order> {
-    return await this.ordersRepository.findOneByOrFail({ id });
+    return await this.ordersRepository.findOneBy({ id });
   }
 
   async updateOrder(id: string, order: Order): Promise<UpdateResult> {

@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
@@ -24,7 +24,7 @@ export class Order {
     }
   }
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   id: string;
 
   @Column({ name: 'customer_id', type: 'uuid' })
