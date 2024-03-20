@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CanActivate, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { JwtAuthGuard } from '../src/modules/auth/guards/jwt-auth.guard';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { OrdersService } from '../src/modules/orders/orders.service';
 
 describe('OrdersController (e2e)', () => {
@@ -69,7 +69,7 @@ describe('OrdersController (e2e)', () => {
   describe('stripe callback', () => {
     it('updates the order payment status via the webhook', () => {
       return request(app.getHttpServer())
-        .post('/orders/stripe_callback')
+        .post('/orders/stripe_webhook')
         .expect(201)
         .expect(mockOrdersService.stripeWebhook());
     });

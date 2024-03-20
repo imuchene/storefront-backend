@@ -9,6 +9,7 @@ import { AuthService } from '../auth.service';
 import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
 import * as bcrypt from 'bcrypt';
 import { CreateCustomerDto } from '../../customers/dto/create-customer.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -72,6 +73,10 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(Customer),
+          useValue: {},
+        },
+        {
+          provide: CACHE_MANAGER,
           useValue: {},
         },
       ],

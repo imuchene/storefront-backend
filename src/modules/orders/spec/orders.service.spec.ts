@@ -8,6 +8,8 @@ import { StripeService } from '../../stripe/stripe.service';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { Order } from '../entities/order.entity';
 import { OrdersService } from '../orders.service';
+import { PaymentRequest } from '../../../modules/payments/entities/payment-request.entity';
+import { MpesaProducer } from '../../../modules/mpesa/mpesa.producer';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -41,11 +43,19 @@ describe('OrdersService', () => {
           useClass: MockRepository,
         },
         {
+          provide: getRepositoryToken(PaymentRequest),
+          useClass: MockRepository,
+        },
+        {
           provide: ProductsService,
           useValue: {},
         },
         {
           provide: StripeService,
+          useValue: {},
+        },
+        {
+          provide: MpesaProducer,
           useValue: {},
         },
       ],

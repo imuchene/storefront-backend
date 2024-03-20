@@ -12,9 +12,14 @@ describe('StripeService', () => {
       return data;
     });
 
+    const mockGetOrThrowFunction = jest.fn((data: any) => {
+      return data;
+    });
+
     const mockConfigService = jest.fn().mockImplementation(() => {
       return {
         get: mockGetFunction,
+        getOrThrow: mockGetOrThrowFunction,
       };
     });
 

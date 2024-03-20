@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CanActivate, INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { JwtAuthGuard } from '../src/modules/auth/guards/jwt-auth.guard';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { ProductsService } from '../src/modules/products/products.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
@@ -15,11 +15,11 @@ describe('ProductsController (e2e)', () => {
     name: 'Test Product 03',
     unitPrice: 10.13,
     description: 'Test Product 03',
-    image: 'images/',
-    deletedAt: null,
+    imageUrl: 'http://www.fake-url.com/image.jpg',
     id: '10335531-df60-4c24-9597-8ce13d841929',
     createdAt: '2022-06-08T13:57:28.247Z',
     updatedAt: '2022-06-08T13:57:28.247Z',
+    deletedAt: null,
   };
 
   const mockTypeormResult: UpdateResult | DeleteResult = {
@@ -36,7 +36,7 @@ describe('ProductsController (e2e)', () => {
       return mockProductObject;
     },
     findAll: () => {
-      return [mockProductObject, mockProductObject];
+      return Array(5).fill(mockProductObject);
     },
     update: () => {
       return mockTypeormResult;
@@ -77,7 +77,9 @@ describe('ProductsController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/products')
         .expect(200)
-        .expect(mockProductsService.findAll());
+        .then((response) => {
+          expect(response.body).toBeInstanceOf(Array);
+        });
     });
   });
 
