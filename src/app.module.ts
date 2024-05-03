@@ -20,6 +20,7 @@ import { databaseConfig } from './common/config/database.config';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
+import { TwoFactorAuthenticationModule } from './modules/two-factor-authentication/two-factor-authentication.module';
 @Module({
   imports: [
     AuthModule,
@@ -77,6 +78,7 @@ import { BullModule } from '@nestjs/bull';
         },
       }),
     }),
+    TwoFactorAuthenticationModule,
   ],
   controllers: [AppController],
   providers: [

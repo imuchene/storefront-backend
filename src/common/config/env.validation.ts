@@ -104,6 +104,9 @@ class EnvironmentVariables {
 
   @IsString()
   DARAJA_CALLBACK_URL: string;
+
+  @IsString()
+  TWO_FACTOR_AUTHENTICATION_ISSUER: string;
 }
 
 export function validate(config: Record<string, unknown>) {
