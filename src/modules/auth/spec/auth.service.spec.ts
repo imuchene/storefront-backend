@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { RedisService } from 'nestjs-redis';
 import { CustomersService } from '../../customers/customers.service';
 import { Customer } from '../../customers/entities/customer.entity';
 import { AuthService } from '../auth.service';
@@ -27,21 +26,12 @@ describe('AuthService', () => {
   let findCustomer: jest.Mock;
 
   beforeEach(async () => {
-    const getClient = jest.fn((data: any) => {
-      return data;
-    });
 
     const signAsync = jest.fn((data: JwtTokenPayload) => {
       return data.customerId;
     });
 
     const get = jest.fn();
-
-    const mockRedisService = jest.fn().mockImplementation(() => {
-      return {
-        getClient: getClient,
-      };
-    });
 
     const mockJwtService = jest.fn().mockImplementation(() => {
       return {
@@ -62,10 +52,6 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useClass: mockJwtService,
-        },
-        {
-          provide: RedisService,
-          useClass: mockRedisService,
         },
         {
           provide: ConfigService,
