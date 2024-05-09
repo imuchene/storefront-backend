@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
 
@@ -33,5 +33,14 @@ export class CustomersService {
 
   async create(customerData: CreateCustomerDto): Promise<Customer> {
     return new Customer(await this.customersRepository.save(customerData));
+  }
+
+  async turnOnTwoFactorAuthentication(
+    customerId: string,
+  ): Promise<UpdateResult> {
+    return await this.customersRepository.update(
+      { id: customerId },
+      { isTwoFactorAuthenticationEnabled: true },
+    );
   }
 }

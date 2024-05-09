@@ -26,7 +26,6 @@ describe('AuthService', () => {
   let findCustomer: jest.Mock;
 
   beforeEach(async () => {
-
     const signAsync = jest.fn((data: JwtTokenPayload) => {
       return data.customerId;
     });

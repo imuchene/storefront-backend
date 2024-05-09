@@ -37,6 +37,9 @@ export class Customer {
   @Exclude()
   confirmPassword: string;
 
+  @Column({ name: 'is_2fa_enabled', default: false })
+  isTwoFactorAuthenticationEnabled: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamptz',
