@@ -1,4 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as OTPAuth from 'otpauth';
 import { Response } from 'express';
@@ -65,7 +70,7 @@ export class TwoFactorAuthenticationService {
     return toFileStream(stream, otpAuthUrl);
   }
 
-  async isTwoFactorAuthenticationCodeValid(
+  async validateTwoFactorCode(
     token: string,
     customer: Customer,
   ): Promise<boolean> {
@@ -77,7 +82,7 @@ export class TwoFactorAuthenticationService {
     if (totp.validate({ token, window: 1 })) {
       return true;
     } else {
-      return false;
+      throw new UnauthorizedException('Wrong authentication code');
     }
   }
 }

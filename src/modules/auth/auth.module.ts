@@ -39,5 +39,6 @@ import * as fs from 'fs';
   ],
   providers: [AuthService, JwtStrategy, LocalStrategy, RefreshStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

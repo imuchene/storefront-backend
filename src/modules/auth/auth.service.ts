@@ -170,4 +170,20 @@ export class AuthService {
     );
     return customer;
   }
+
+  async getCookieWithJwtAccessToken(
+    customerId: string,
+    isSecondFactorAuthenticated = false,
+  ): Promise<string> {
+    const payload: JwtTokenPayload = {
+      customerId,
+      isSecondFactorAuthenticated,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getOrThrow<string>(
+      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+    )}`;
+  }
 }
