@@ -43,9 +43,22 @@ export class TwoFactorAuthenticationService {
   }
 
   async generateTwoFactorAuthenticationSecret(customer: Customer) {
+    let base32Secret: string;
+
+    // First check if there's an existing secret for the customer stored in redis
+    const storedSecret = await this.cacheManager.get<string>(
+      `${RedisKeys.TwoFactorSecret}:${customer.id}`,
+    );
+
     const secret = crypto.randomBytes(12).toString('hex').toUpperCase();
 
-    const base32Secret = base32.encode(Buffer.from(secret));
+    if (storedSecret) {
+      // If there's an existing secret, set the secret to be used to be the stored secret
+      base32Secret = storedSecret;
+    } else {
+      // If no secret exists for the customer, generate a new one
+      base32Secret = base32.encode(Buffer.from(secret));
+    }
 
     // Save the secret to redis and set it to not expire (expiry = 0)
     await this.cacheManager.set(
@@ -54,14 +67,9 @@ export class TwoFactorAuthenticationService {
       0,
     );
 
-    this.logger.log('secret', secret);
-    this.logger.log('base 32 secret', base32Secret);
-
     const totp = await this.createOtpObject(base32Secret);
 
     const uri = OTPAuth.URI.stringify(totp);
-
-    this.logger.log('uri', uri);
 
     return uri;
   }
@@ -79,7 +87,9 @@ export class TwoFactorAuthenticationService {
     );
     const totp = await this.createOtpObject(secret);
 
-    if (totp.validate({ token, window: 1 })) {
+    const validationCheck = totp.validate({ token, window: 1 });
+
+    if (Number.isInteger(validationCheck)) {
       return true;
     } else {
       throw new UnauthorizedException('Wrong authentication code');

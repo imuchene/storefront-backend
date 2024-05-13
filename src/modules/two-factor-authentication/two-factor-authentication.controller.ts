@@ -74,8 +74,10 @@ export class TwoFactorAuthenticationController {
       twoFactorAuthenticationCode,
       customer,
     );
+
     const accessTokenCookie =
       await this.authService.getCookieWithJwtAccessToken(customer.id, true);
+
     request.res.setHeader('Set-Cookie', [accessTokenCookie]);
     return request.customer;
   }
