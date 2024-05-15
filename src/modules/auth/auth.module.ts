@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import { JwtTwoFactorStrategy } from './strategies/jwt-two-factor.strategy';
 import * as fs from 'fs';
 
 @Module({
@@ -37,7 +38,7 @@ import * as fs from 'fs';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy, RefreshStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, RefreshStrategy, JwtTwoFactorStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })
