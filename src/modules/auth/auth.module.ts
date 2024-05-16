@@ -38,7 +38,13 @@ import * as fs from 'fs';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy, RefreshStrategy, JwtTwoFactorStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    LocalStrategy,
+    RefreshStrategy,
+    JwtTwoFactorStrategy,
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

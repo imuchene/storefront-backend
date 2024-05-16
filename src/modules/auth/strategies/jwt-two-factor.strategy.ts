@@ -9,23 +9,28 @@ import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
 import { Customer } from '../../../modules/customers/entities/customer.entity';
 
 @Injectable()
-export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-two-factor') {
+export class JwtTwoFactorStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-two-factor',
+) {
   constructor(
     readonly configService: ConfigService,
     private readonly customerService: CustomersService,
-  ){
+  ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
-        return request?.cookies?.Authentication;
-      }]),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: Request) => {
+          return request?.cookies?.Authentication;
+        },
+      ]),
       /* eslint-disable-next-line security/detect-non-literal-fs-filename */
       secretOrKey: fs
         .readFileSync(configService.get<string>('JWT_ACCESS_TOKEN_PUBLIC_KEY'))
         .toString(),
-    })
+    });
   }
 
-  async validate(payload: JwtTokenPayload): Promise<Customer>{
+  async validate(payload: JwtTokenPayload): Promise<Customer> {
     const customer = this.customerService.getById(payload.customerId);
     if (!(await customer).isTwoFactorAuthenticationEnabled) {
       return customer;
@@ -35,5 +40,4 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-two-fa
       return customer;
     }
   }
-
 }

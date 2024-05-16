@@ -7,7 +7,7 @@ import { Customer } from '../customers/entities/customer.entity';
 import { Order } from './entities/order.entity';
 import Stripe from 'stripe';
 import { LipaNaMpesaCallback } from '../mpesa/interfaces/lipa-na-mpesa-callback.interface';
-import JwtTwoFactorGuard from '../auth/guards/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from '../auth/guards/jwt-two-factor.guard';
 
 @Controller('orders')
 export class OrdersController {
