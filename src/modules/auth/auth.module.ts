@@ -7,12 +7,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
-import { JwtTwoFactorStrategy } from './strategies/jwt-two-factor.strategy';
 import * as fs from 'fs';
+import { TotpStrategy } from './strategies/totp.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     CustomersModule,
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -43,7 +45,7 @@ import * as fs from 'fs';
     JwtStrategy,
     LocalStrategy,
     RefreshStrategy,
-    JwtTwoFactorStrategy,
+    TotpStrategy,
   ],
   controllers: [AuthController],
   exports: [AuthService],

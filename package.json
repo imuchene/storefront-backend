@@ -58,6 +58,7 @@
     "luxon": "^3.3.0",
     "otpauth": "^9.2.3",
     "passport": "^0.6.0",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.11.1",

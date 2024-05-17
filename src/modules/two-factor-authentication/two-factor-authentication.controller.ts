@@ -68,6 +68,7 @@ export class TwoFactorAuthenticationController {
   async authenticate(
     @GetCustomer() customer: Customer,
     @Req() request: RequestWithCustomer,
+    @Res({ passthrough: true }) response: Response,
     @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
   ): Promise<Customer> {
     await this.twoFactorAuthenticationService.validateTwoFactorCode(
@@ -75,10 +76,12 @@ export class TwoFactorAuthenticationController {
       customer,
     );
 
-    const accessTokenCookie =
-      await this.authService.getCookieWithJwtAccessToken(customer.id, true);
+    await this.authService.getCookieWithJwtAccessToken(
+      customer.id,
+      true,
+      response,
+    );
 
-    request.res.setHeader('Set-Cookie', [accessTokenCookie]);
     return request.customer;
   }
 }

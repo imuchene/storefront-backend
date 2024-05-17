@@ -8,6 +8,7 @@ import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
 import { Customer } from '../../customers/entities/customer.entity';
 import { SecretData } from '../interfaces/secret-data.interface';
 import * as fs from 'fs';
+import { CookieNames } from 'src/common/enums/cookie-names.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -18,7 +19,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
-          const data: SecretData = request?.signedCookies['auth-cookie'];
+          const data: SecretData =
+            request?.signedCookies[CookieNames.AuthCookie];
           if (!data) {
             return null;
           }

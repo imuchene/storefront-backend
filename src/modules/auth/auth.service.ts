@@ -20,6 +20,8 @@ import * as fs from 'fs';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { Response } from 'express';
+import { CookieNames } from 'src/common/enums/cookie-names.enum';
 
 @Injectable()
 export class AuthService {
@@ -174,6 +176,7 @@ export class AuthService {
   async getCookieWithJwtAccessToken(
     customerId: string,
     isSecondFactorAuthenticated = false,
+    response: Response,
   ): Promise<string> {
     const payload: JwtTokenPayload = {
       customerId,
@@ -182,8 +185,14 @@ export class AuthService {
 
     const token = await this.jwtService.signAsync(payload);
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getOrThrow<string>(
-      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
-    )}`;
+    response.cookie(CookieNames.TotpCookie, token, {
+      expires: new Date(Date.now() + 900000), // Set the cookie to expire in 900000 milliseconds = 15 minutes
+      sameSite: 'none', // allow cross origin requests i.e. requests from different domains (since our frontend is hosted on a different domain)
+      httpOnly: true, // forbid the cookie being accessed by client side javascript
+      signed: true, // prevent the cookie from being tampered with by appending a signature with the cookie
+      secure: true, // the cookie can only be sent via a secure protocol i.e. HTTPS (this is also a pre-requisite for using sameSite: none)
+    });
+
+    return 'success';
   }
 }
