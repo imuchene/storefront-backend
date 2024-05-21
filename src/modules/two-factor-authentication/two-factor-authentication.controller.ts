@@ -39,7 +39,7 @@ export class TwoFactorAuthenticationController {
         customer,
       );
 
-    return this.twoFactorAuthenticationService.pipeQrCodeStream(
+    return await this.twoFactorAuthenticationService.pipeQrCodeStream(
       response,
       otpAuthUrl,
     );
@@ -66,18 +66,17 @@ export class TwoFactorAuthenticationController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   async authenticate(
-    @GetCustomer() customer: Customer,
     @Req() request: RequestWithCustomer,
     @Res({ passthrough: true }) response: Response,
     @Body() { twoFactorAuthenticationCode }: TwoFactorAuthenticationCodeDto,
   ): Promise<Customer> {
     await this.twoFactorAuthenticationService.validateTwoFactorCode(
       twoFactorAuthenticationCode,
-      customer,
+      request.customer,
     );
 
     await this.authService.getCookieWithJwtAccessToken(
-      customer.id,
+      request.customer.id,
       true,
       response,
     );
