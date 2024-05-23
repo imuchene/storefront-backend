@@ -14,7 +14,7 @@ describe('AuthController (e2e)', () => {
   const fakeCustomer = new Customer({
     name: testFirstName + ' ' + testLastName,
     email: `${testFirstName.toLowerCase()}@example.com`,
-    phoneNumber: faker.phone.imei(),
+    phoneNumber: '+254720' + faker.string.numeric(6),
     password: testPassword,
     confirmPassword: testPassword,
   });
@@ -44,7 +44,9 @@ describe('AuthController (e2e)', () => {
             password: fakeCustomer.password,
             confirmPassword: fakeCustomer.confirmPassword,
           })
-          .expect(201);
+          .then((result) => {
+            expect(result.statusCode).toEqual(201);
+          });
       });
 
       it('should throw an error when a duplicate user is registered', () => {
@@ -82,9 +84,11 @@ describe('AuthController (e2e)', () => {
             email: fakeCustomer.email,
             password: fakeCustomer.password,
           })
-          .expect(201)
-          .expect({
-            msg: 'success',
+          .then((result) => {
+            expect(result.statusCode).toEqual(201);
+            expect(result.body).toEqual({
+              msg: 'success',
+            });
           });
       });
     });

@@ -37,6 +37,13 @@ export class Customer {
   @Exclude()
   confirmPassword: string;
 
+  @Column({
+    name: 'is_phone_number_confirmed',
+    type: 'boolean',
+    default: false,
+  })
+  isPhoneNumberConfirmed: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamptz',

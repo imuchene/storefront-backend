@@ -40,14 +40,15 @@ export class OrdersService {
     const existingOrder = await this.findOrder(createOrderDto.id);
 
     if (existingOrder) {
-      throw new UnprocessableEntityException('An order with the same ID already exists');
+      throw new UnprocessableEntityException(
+        'An order with the same ID already exists',
+      );
     }
 
     // Check if the products in the order exist
     const productIds = createOrderDto.orderItems.map((item) => item.productId);
-    const products = await this.productsService.checkIfProductsExist(
-      productIds,
-    );
+    const products =
+      await this.productsService.checkIfProductsExist(productIds);
 
     // If none of the products in the order exist, or only some exist, while others
     // do not, throw an exception

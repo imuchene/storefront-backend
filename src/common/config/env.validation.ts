@@ -104,6 +104,15 @@ class EnvironmentVariables {
 
   @IsString()
   DARAJA_CALLBACK_URL: string;
+
+  @IsString()
+  TWILIO_ACCOUNT_SID: string;
+
+  @IsString()
+  TWILIO_AUTH_TOKEN: string;
+
+  @IsString()
+  TWILIO_VERIFICATION_SERVICE_SID: string;
 }
 
 export function validate(config: Record<string, unknown>) {
