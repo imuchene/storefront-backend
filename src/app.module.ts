@@ -21,6 +21,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
 import { SmsModule } from './modules/sms/sms.module';
+import KeyvRedis from '@keyv/redis';
 @Module({
   imports: [
     AuthModule,
@@ -28,17 +29,21 @@ import { SmsModule } from './modules/sms/sms.module';
     CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        store: await redisStore({
-          socket: {
-            host: configService.get('REDIS_HOST'),
-            port: parseInt(configService.getOrThrow('REDIS_PORT')),
-          },
-          username: configService.getOrThrow('REDIS_USERNAME'),
-          password: configService.getOrThrow('REDIS_PASSWORD'),
-          database: configService.getOrThrow('REDIS_DB'),
-        }),
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return {
+          stores: [
+            new KeyvRedis({
+              socket: {
+                host: configService.get('REDIS_HOST'),
+                port: parseInt(configService.getOrThrow('REDIS_PORT')),
+              },
+              username: configService.getOrThrow('REDIS_USERNAME'),
+              password: configService.getOrThrow('REDIS_PASSWORD'),
+              database: configService.getOrThrow('REDIS_DB'),
+            })
+          ]
+        }
+      },
       inject: [ConfigService],
     }),
     ConfigModule.forRoot({
@@ -93,4 +98,4 @@ import { SmsModule } from './modules/sms/sms.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

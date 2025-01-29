@@ -125,7 +125,7 @@ export class OrdersService {
         order.paymentStatus = PaymentStatus.Succeeded;
         break;
 
-      case PaymentIntentEvent.Processing:
+      case PaymentIntentEvent.Pending:
         // If the event type is processing, update the payment status to processing
         order.paymentStatus = PaymentStatus.Processing;
         break;
