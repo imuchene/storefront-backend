@@ -94,18 +94,26 @@ describe('AuthController (e2e)', () => {
     });
 
     describe('and using invalid data', () => {
-      it('should respond with a bad request error message', () => {
+      it('should respond with a not found error message', () => {
         return request(app.getHttpServer())
           .post('/auth/login')
           .send({
             email: 'fake@fake.com',
             password: 'fakepassword',
           })
-          .expect(400)
-          .expect({
-            statusCode: 400,
-            message: 'Wrong credentials provided',
-            error: 'Bad Request',
+          .then((result) => {
+            expect(result.statusCode).toEqual(404);
+            expect(result.body).toEqual({
+              response: {
+                message: 'Wrong credentials provided',
+                error: 'Not Found',
+                statusCode: 404,
+              },
+              status: 404,
+              options: {},
+              message: 'Wrong credentials provided',
+              name: 'NotFoundException',
+            });
           });
       });
     });

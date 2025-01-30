@@ -9,6 +9,8 @@ import { JwtTokenPayload } from '../interfaces/jwt-payload.interface';
 import * as bcrypt from 'bcrypt';
 import { CreateCustomerDto } from '../../customers/dto/create-customer.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HTTPError } from 'superagent';
+import { NotFoundException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -181,7 +183,7 @@ describe('AuthService', () => {
             );
             expect(customer).toBe(customerData);
           } catch (error) {
-            console.log('[authService spec] error', error);
+            expect(error).toBeInstanceOf(NotFoundException);
           }
         });
       });
@@ -210,7 +212,8 @@ describe('AuthService', () => {
           'strongPassword',
         );
       } catch (error) {
-        expect(getByEmailSpy).toBeCalledTimes(1);
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(getByEmailSpy).toHaveBeenCalledTimes(1);
       }
     });
   });

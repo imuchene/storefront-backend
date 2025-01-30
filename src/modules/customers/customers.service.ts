@@ -18,7 +18,7 @@ export class CustomersService {
       return customer;
     }
 
-    throw new NotFoundException('Customer with this email does not exist');
+    throw new NotFoundException('Wrong credentials provided');
   }
 
   async getById(id: string): Promise<Customer> {

@@ -15,7 +15,6 @@ import { MpesaModule } from './modules/mpesa/mpesa.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { HttpModule } from '@nestjs/axios';
 import { RedisClientOptions } from 'redis';
-import { redisStore } from 'cache-manager-redis-yet';
 import { databaseConfig } from './common/config/database.config';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -40,9 +39,9 @@ import KeyvRedis from '@keyv/redis';
               username: configService.getOrThrow('REDIS_USERNAME'),
               password: configService.getOrThrow('REDIS_PASSWORD'),
               database: configService.getOrThrow('REDIS_DB'),
-            })
-          ]
-        }
+            }),
+          ],
+        };
       },
       inject: [ConfigService],
     }),
@@ -98,4 +97,4 @@ import KeyvRedis from '@keyv/redis';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

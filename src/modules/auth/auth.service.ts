@@ -69,7 +69,7 @@ export class AuthService {
       await this.verifyPassword(plainTextPassword, customer.password);
       return customer;
     } catch (error) {
-      throw new BadRequestException('Wrong credentials provided');
+      throw new NotFoundException(error, 'Wrong credentials provided');
     }
   }
 
@@ -82,7 +82,7 @@ export class AuthService {
       hashedPassword,
     );
     if (!isPasswordMatching) {
-      throw new BadRequestException('Wrong credentials provided');
+      throw new NotFoundException('Wrong credentials provided');
     }
   }
 
@@ -109,7 +109,7 @@ export class AuthService {
           ),
         )
         .toString(),
-      /* eslint-disable-next-line security/detect-non-literal-fs-filename */
+
       expiresIn: this.configService.getOrThrow(
         'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
       ),

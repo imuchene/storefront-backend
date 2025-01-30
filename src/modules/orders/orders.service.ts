@@ -107,7 +107,6 @@ export class OrdersService {
   }
 
   async updateOrder(id: string, order: Order): Promise<UpdateResult> {
-    await this.findOrder(id);
     return await this.ordersRepository.update(id, order);
   }
 
@@ -122,6 +121,10 @@ export class OrdersService {
     switch (event.type) {
       // If the event type is a succeeded, update the payment status to succeeded
       case PaymentIntentEvent.Succeeded:
+        order.paymentStatus = PaymentStatus.Succeeded;
+        break;
+
+      case PaymentIntentEvent.Updated:
         order.paymentStatus = PaymentStatus.Succeeded;
         break;
 
