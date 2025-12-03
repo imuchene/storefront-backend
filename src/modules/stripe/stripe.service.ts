@@ -36,7 +36,7 @@ export class StripeService {
       const paymentIntentParams: Stripe.PaymentIntentCreateParams = {
         amount: amountToCents,
         currency: this.configService.getOrThrow<string>('STRIPE_CURRENCY'),
-        payment_method_types: ['card', 'klarna', 'alipay'],
+        payment_method_types: ['card', 'klarna'],
         metadata: { orderId: orderId },
       };
 
