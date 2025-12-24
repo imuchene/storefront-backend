@@ -54,8 +54,26 @@ export class OrdersService {
     // do not, throw an exception
     if (products.length < 1 || products.length != productIds.length) {
       throw new UnprocessableEntityException(
-        'The order could not be processed',
+        'The order could not be processed, some products are missing',
       );
+    }
+
+    // Validate that the order total from the frontend is correct
+    // by recalculating the order total, minus any discounts
+    let verifiedTotalAmount: number = 0;
+
+    createOrderDto.orderItems.forEach((orderItem) => {
+      products.forEach((product) => {
+        if (product.id === orderItem.productId) {
+          verifiedTotalAmount += product.unitPrice * orderItem.quantity;
+        }
+      });
+    });
+
+    // if there's a discrepancy with the submitted and verified order total, throw an error
+    if (createOrderDto.totalAmount !== verifiedTotalAmount) {
+      throw new UnprocessableEntityException(`The order could not be processed. 
+        There's an issue with order totals`);
     }
 
     const order = new Order({
