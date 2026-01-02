@@ -71,7 +71,7 @@ export class OrdersService {
     });
 
     // if there's a discrepancy with the submitted and verified order total, throw an error
-    if (createOrderDto.totalAmount !== verifiedTotalAmount) {
+    if (createOrderDto.totalAmount !== Number(verifiedTotalAmount.toFixed(2))) {
       throw new UnprocessableEntityException(`The order could not be processed. 
         There's an issue with order totals`);
     }
