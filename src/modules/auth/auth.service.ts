@@ -10,7 +10,7 @@ import {
 import { CustomersService } from '../customers/customers.service';
 import { CreateCustomerDto } from '../customers/dto/create-customer.dto';
 import * as bcrypt from 'bcrypt';
-import { PostgresErrorCode } from '../../common/enums/postgres-error-codes.enum';
+import { PostgresErrorMessages } from '../../common/enums/postgres-error-messages.enum';
 import { Customer } from '../customers/entities/customer.entity';
 import { JwtTokenPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -20,6 +20,7 @@ import * as fs from 'fs';
 import { RedisKeys } from '../../common/enums/redis-keys.enum';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -47,10 +48,12 @@ export class AuthService {
         password: hashedPassword,
       });
     } catch (error) {
-      if (error?.code === PostgresErrorCode.UniqueViolation) {
-        throw new BadRequestException(
-          'Customer with that email already exists',
-        );
+      if (error instanceof QueryFailedError) {
+        if (error.message === PostgresErrorMessages.UniqueViolation) {
+          throw new BadRequestException(
+            'Customer with that email already exists',
+          );
+        }
       }
 
       Logger.error('[authService] registration error', util.inspect(error));

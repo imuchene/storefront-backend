@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AddUniquenessConstraintToCustomers1650977110579
-  implements MigrationInterface
-{
+export class AddUniquenessConstraintToCustomers1650977110579 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.changeColumn(
       'customers',

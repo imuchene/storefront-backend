@@ -32,7 +32,7 @@ describe('Enqueuer Service', () => {
         phoneNumber: '0721000000',
       });
 
-      expect(mockQueue.add).toBeCalledTimes(1);
+      expect(mockQueue.add).toHaveBeenCalledTimes(1);
     });
   });
 });

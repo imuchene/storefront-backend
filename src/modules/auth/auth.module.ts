@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
 import * as fs from 'fs';
+import { StringValue } from 'ms';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import * as fs from 'fs';
           )
           .toString(),
         signOptions: {
-          expiresIn: configService.get<string>(
+          expiresIn: configService.get<StringValue>(
             'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
           ),
           algorithm: 'RS256',

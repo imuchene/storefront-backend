@@ -25,8 +25,10 @@ export class MpesaProcessor {
       const data: LipaNaMpesaParams = job.data;
       return await this.mpesaService.createLipaNaMpesaRequest(data);
     } catch (error) {
-      this.logger.error('Error occurred', error);
-      throw new Error(error);
+      if (error instanceof Error) {
+        this.logger.error('Error occurred', error);
+        throw new Error(error.message);
+      }
     }
   }
 

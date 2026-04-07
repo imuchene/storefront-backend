@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class RemoveUnitPriceFromOrderItems1673264642338
-  implements MigrationInterface
-{
+export class RemoveUnitPriceFromOrderItems1673264642338 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumn('order_items', 'unit_price');
   }

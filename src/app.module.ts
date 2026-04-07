@@ -20,7 +20,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bull';
 import { SmsModule } from './modules/sms/sms.module';
-import KeyvRedis from '@keyv/redis';
+import KeyvRedis, { createClient } from '@keyv/redis';
 @Module({
   imports: [
     AuthModule,
@@ -29,18 +29,18 @@ import KeyvRedis from '@keyv/redis';
       isGlobal: true,
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
+        const redis = createClient({
+          socket: {
+            host: configService.get('REDIS_HOST'),
+            port: parseInt(configService.getOrThrow('REDIS_PORT')),
+          },
+          username: configService.getOrThrow('REDIS_USERNAME'),
+          password: configService.getOrThrow('REDIS_PASSWORD'),
+          database: configService.getOrThrow('REDIS_DB'),
+        });
+
         return {
-          stores: [
-            new KeyvRedis({
-              socket: {
-                host: configService.get('REDIS_HOST'),
-                port: parseInt(configService.getOrThrow('REDIS_PORT')),
-              },
-              username: configService.getOrThrow('REDIS_USERNAME'),
-              password: configService.getOrThrow('REDIS_PASSWORD'),
-              database: configService.getOrThrow('REDIS_DB'),
-            }),
-          ],
+          stores: [new KeyvRedis(redis)],
         };
       },
       inject: [ConfigService],

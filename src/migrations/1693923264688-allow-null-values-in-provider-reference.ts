@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AllowNullValuesInProviderReference1693923264688
-  implements MigrationInterface
-{
+export class AllowNullValuesInProviderReference1693923264688 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.changeColumn(
       'payment_requests',

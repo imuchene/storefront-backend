@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AddPaymentStatusToOrders1652272019740
-  implements MigrationInterface
-{
+export class AddPaymentStatusToOrders1652272019740 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
       'orders',

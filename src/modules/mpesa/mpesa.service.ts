@@ -145,8 +145,10 @@ export class MpesaService {
       const lipaNaMpesaResponse: LipaNaMpesaResponse = data;
       return lipaNaMpesaResponse;
     } catch (error) {
-      this.logger.error('Mpesa Error', util.inspect(error));
-      throw new Error(error);
+      if (error instanceof Error) {
+        this.logger.error('Mpesa Error', util.inspect(error));
+        throw new Error(error.message);
+      }
     }
   }
 }

@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableUnique } from 'typeorm';
 
-export class AddUniquenessConstraintToOrderPayments1691073047948
-  implements MigrationInterface
-{
+export class AddUniquenessConstraintToOrderPayments1691073047948 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createUniqueConstraint(
       'order_payments',
