@@ -44,7 +44,6 @@ export class Order {
     name: 'created_at',
     type: 'timestamptz',
     default: 'now()',
-    readonly: true,
   })
   createdAt: string;
 

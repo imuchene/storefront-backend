@@ -48,7 +48,6 @@ export class Customer {
     name: 'created_at',
     type: 'timestamptz',
     default: 'now()',
-    readonly: true,
   })
   createdAt: string;
 

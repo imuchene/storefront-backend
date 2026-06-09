@@ -40,7 +40,6 @@ export class OrderPayment {
     name: 'created_at',
     type: 'timestamptz',
     default: 'now()',
-    readonly: true,
   })
   createdAt: string;
 
