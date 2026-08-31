@@ -44,9 +44,9 @@
     "@nestjs/typeorm": "^11.0.1",
     "@types/bcrypt": "^6.0.0",
     "@types/passport-local": "^1.0.38",
-    "axios": "^1.17.0",
+    "axios": "^1.20.0",
     "bcrypt": "^6.0.0",
-    "body-parser": "^2.2.2",
+    "body-parser": "^2.3.0",
     "bull": "^4.16.5",
     "cache-manager": "^7.2.8",
     "class-transformer": "^0.5.1",
@@ -65,7 +65,7 @@
     "rxjs": "^7.8.2",
     "stripe": "^17.6.0",
     "twilio": "^5.13.1",
-    "typeorm": "^1.0.0"
+    "typeorm": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
@@ -100,7 +100,7 @@
     "source-map-support": "^0.5.21",
     "superagent": "^10.3.0",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.12",
     "ts-loader": "^9.5.7",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -126,6 +126,13 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": "^22.17.0"
+    "node": "^24.19.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "@swc/core@1.16.1": true,
+    "bcrypt@6.0.0": true,
+    "msgpackr-extract@3.0.4": true,
+    "unrs-resolver@1.12.2": true
   }
 }
